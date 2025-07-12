@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คำพื้นฐาน - พจนานุกรม ไทย-อังกฤษ</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="sakura-header">
+        <div class="sakura-header-inner">
+            <h1>🌸 คำพื้นฐาน</h1>
+            <span class="sakura-highlight"></span>
+            <nav>
+                <ul>
+                    <li><a href="index.html">หน้าหลัก</a></li>
+                    <li><a href="basic-words.html" class="active">คำพื้นฐาน</a></li>
+                    <li><a href="verbs-adjectives.html">คำกริยาและคำคุณศัพท์</a></li>
+                    <li><a href="nouns-phrases-1.html">คำนามและวลี 1</a></li>
+                    <li><a href="nouns-phrases-2.html">คำนามและวลี 2</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="sakura-intro sakura-card" style="max-width:900px;margin:32px auto 0 auto;padding:32px 24px 24px 24px;box-shadow:0 2px 16px #eec6e6;border-radius:18px;background:rgba(255,255,255,0.92);">
+            <h2 style="font-size:2.1rem;margin-bottom:8px;">🌸 รวมคำศัพท์พื้นฐานที่ใช้บ่อยในชีวิตประจำวัน</h2>
+            <span class="sakura-highlight"></span>
+            <p style="font-size:1.13rem;color:#a13c7a;margin-bottom:18px;">ค้นหา/สุ่ม/ฝึกแฟลชการ์ด ได้ทันที</p>
+            <div id="random-word-of-day" class="sakura-tooltip" style="margin:18px auto 0 auto;max-width:350px;font-size:1.12rem;">
+                <b>🌟 คำสุ่มประจำวัน:</b> <span id="randomWordText">Loading...</span>
+                <span class="sakura-tooltip-text">เปลี่ยนใหม่ทุกวันโดยอัตโนมัติ</span>
+            </div>
+            <div id="word-count" style="margin:10px auto 0 auto;color:#a13c7a;font-size:1.05rem;"></div>
+        </section>
+        <section class="word-list sakura-card" style="max-width:900px;margin:32px auto 32px auto;padding:24px 18px 32px 18px;box-shadow:0 2px 16px #eec6e6;border-radius:18px;background:rgba(255,255,255,0.97);">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                <h3 style="margin:0;font-size:1.35rem;color:#b45a8d;">📖 ตารางคำศัพท์</h3>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <button id="flashcard-toggle" style="background:#fff0fa;border:1px solid #eec6e6;color:#b45a8d;padding:6px 16px;border-radius:8px;cursor:pointer;font-size:1rem;transition:background 0.2s;">🔄 Flashcard Mode</button>
+                  <div id="sakura-search-bar"></div>
+                </div>
+            </div>
+            <hr class="sakura-divider" style="margin:0 0 18px 0;">
+            <div style="overflow-x:auto;">
+            <table class="sakura-table" style="width:100%;min-width:600px;">
+                <thead>
+                    <tr style="background:#fbeaf6;">
+                        <th style="width:22%;">English</th>
+                        <th style="width:25%;">Pronounce</th>
+                        <th style="width:33%;">Meaning (Thai)</th>
+                        <th style="width:20%;"><span title="Action" class="sakura-tooltip">⚡<span class="sakura-tooltip-text">ปุ่มฟีเจอร์ (เช่น ฟังเสียง/คัดลอก)</span></span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- ตารางคำศัพท์ -->
+                    <tr>
+                        <td>Good Bye</td>
+                        <td>กู๊ด-บาย</td>
+                        <td>ลาก่อน</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>We wish you a merry Christmas</td>
+                        <td>วี-วิ-ช-ยู-อะ-เมอร์-รี่-คริด-สะ-มัด</td>
+                        <td>เราขอให้คุณมีความสุขในวันคริสต์มาส</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Thank you very much</td>
+                        <td>แต็ง-กิ้ว-เวรี่-มัด</td>
+                        <td>ขอบคุณมาก</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>What are you doing?</td>
+                        <td>ว้อท-อา-ยู-ดู-อิ่ง</td>
+                        <td>คุณทำอะไรอยู่?</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>How are you?</td>
+                        <td>ฮาว-อา-ยู</td>
+                        <td>คุณเป็นอย่างไรบ้าง?</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>My name is</td>
+                        <td>มาย-เนม-อิส</td>
+                        <td>ฉันชื่อ</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>What is this?</td>
+                        <td>ว้อท-อิส-ดีส</td>
+                        <td>นี่คืออะไร?</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Do you speak Thai?</td>
+                        <td>ดู-ยู-สปีก-ไทย</td>
+                        <td>คุณพูดภาษาไทยได้ไหม?</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Yes, I do</td>
+                        <td>เยส-ไอ-ดู</td>
+                        <td>ครับ/ค่ะ ได้</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>No, I don't</td>
+                        <td>โน-ไอ-โด๊นท์</td>
+                        <td>ไม่ได้</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Please</td>
+                        <td>พลีส</td>
+                        <td>ได้โปรด</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Excuse me</td>
+                        <td>เอ๊ก-คิ้ว-มี</td>
+                        <td>ขอโทษ</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Sorry</td>
+                        <td>ซอรี่</td>
+                        <td>เสียใจ</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Father</td>
+                        <td>ฟา-เธ่อร์</td>
+                        <td>พ่อ</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Mother</td>
+                        <td>มา-เธ่อร์</td>
+                        <td>แม่</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Daughter</td>
+                        <td>ด๊อท-เธ่อร์</td>
+                        <td>ลูกสาว</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Eat</td>
+                        <td>กิน</td>
+                        <td>กิน</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Drink</td>
+                        <td>ดริ๊งค์</td>
+                        <td>ดื่ม</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Go</td>
+                        <td>โก</td>
+                        <td>ไป</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Come</td>
+                        <td>คัม</td>
+                        <td>มา</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>See</td>
+                        <td>ซี</td>
+                        <td>เห็น</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Hear</td>
+                        <td>เฮียร์</td>
+                        <td>ได้ยิน</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Speak</td>
+                        <td>สปีค</td>
+                        <td>พูด</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Read</td>
+                        <td>รีด</td>
+                        <td>อ่าน</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Write</td>
+                        <td>ไรท์</td>
+                        <td>เขียน</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Walk</td>
+                        <td>วอล์ค</td>
+                        <td>เดิน</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Run</td>
+                        <td>รัน</td>
+                        <td>วิ่ง</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Sleep</td>
+                        <td>สลีป</td>
+                        <td>นอน</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Wake up</td>
+                        <td>เวค-อัพ</td>
+                        <td>ตื่น</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Buy</td>
+                        <td>บาย</td>
+                        <td>ซื้อ</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Sell</td>
+                        <td>เซล</td>
+                        <td>ขาย</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Open</td>
+                        <td>โอเพ่น</td>
+                        <td>เปิด</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Close</td>
+                        <td>โคลส</td>
+                        <td>ปิด</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Hot</td>
+                        <td>ฮ็อท</td>
+                        <td>ร้อน</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Cold</td>
+                        <td>โคลด์</td>
+                        <td>เย็น</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Big</td>
+                        <td>บิ๊ก</td>
+                        <td>ใหญ่</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Small</td>
+                        <td>สมอลล์</td>
+                        <td>เล็ก</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Beautiful</td>
+                        <td>บิวตี้ฟูล</td>
+                        <td>สวย</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Handsome</td>
+                        <td>แฮนด์ซัม</td>
+                        <td>หล่อ</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Happy</td>
+                        <td>แฮปปี้</td>
+                        <td>มีความสุข</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Sad</td>
+                        <td>แซด</td>
+                        <td>เศร้า</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Angry</td>
+                        <td>แองกรี้</td>
+                        <td>โกรธ</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Love</td>
+                        <td>เลิฟ</td>
+                        <td>รัก</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Like</td>
+                        <td>ไลค์</td>
+                        <td>ชอบ</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Dislike</td>
+                        <td>ดิสไลค์</td>
+                        <td>ไม่ชอบ</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Friend</td>
+                        <td>เฟรนด์</td>
+                        <td>เพื่อน</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Family</td>
+                        <td>แฟมิลี่</td>
+                        <td>ครอบครัว</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>School</td>
+                        <td>สคูล</td>
+                        <td>โรงเรียน</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Teacher</td>
+                        <td>ทีชเชอร์</td>
+                        <td>ครู</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Student</td>
+                        <td>สตูเดนท์</td>
+                        <td>นักเรียน</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Book</td>
+                        <td>บุ๊ค</td>
+                        <td>หนังสือ</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Pencil</td>
+                        <td>เพนซิล</td>
+                        <td>ดินสอ</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Pen</td>
+                        <td>เพ็น</td>
+                        <td>ปากกา</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Bag</td>
+                        <td>แบ็ก</td>
+                        <td>กระเป๋า</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Table</td>
+                        <td>เทเบิล</td>
+                        <td>โต๊ะ</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Chair</td>
+                        <td>แชร์</td>
+                        <td>เก้าอี้</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Window</td>
+                        <td>วินโดว์</td>
+                        <td>หน้าต่าง</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Door</td>
+                        <td>ดอร์</td>
+                        <td>ประตู</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>House</td>
+                        <td>เฮาส์</td>
+                        <td>บ้าน</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Room</td>
+                        <td>รูม</td>
+                        <td>ห้อง</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Kitchen</td>
+                        <td>คิทเช่น</td>
+                        <td>ห้องครัว</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Bathroom</td>
+                        <td>บาธรูม</td>
+                        <td>ห้องน้ำ</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Bed</td>
+                        <td>เบด</td>
+                        <td>เตียง</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Car</td>
+                        <td>คาร์</td>
+                        <td>รถยนต์</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Bus</td>
+                        <td>บัส</td>
+                        <td>รถบัส</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Train</td>
+                        <td>เทรน</td>
+                        <td>รถไฟ</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Airplane</td>
+                        <td>แอร์เพลน</td>
+                        <td>เครื่องบิน</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Boat</td>
+                        <td>โบ๊ท</td>
+                        <td>เรือ</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Street</td>
+                        <td>สตรีท</td>
+                        <td>ถนน</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Market</td>
+                        <td>มาร์เก็ต</td>
+                        <td>ตลาด</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Shop</td>
+                        <td>ช็อป</td>
+                        <td>ร้านค้า</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Money</td>
+                        <td>มันนี่</td>
+                        <td>เงิน</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Food</td>
+                        <td>ฟู้ด</td>
+                        <td>อาหาร</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Fruit</td>
+                        <td>ฟรุต</td>
+                        <td>ผลไม้</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Vegetable</td>
+                        <td>เวจเทเบิล</td>
+                        <td>ผัก</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Rice</td>
+                        <td>ไรซ์</td>
+                        <td>ข้าว</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Egg</td>
+                        <td>เอ้ก</td>
+                        <td>ไข่</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Chicken</td>
+                        <td>ชิคเก้น</td>
+                        <td>ไก่</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Fish</td>
+                        <td>ฟิช</td>
+                        <td>ปลา</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Dog</td>
+                        <td>ด็อก</td>
+                        <td>สุนัข</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <tr>
+                        <td>Cat</td>
+                        <td>แคท</td>
+                        <td>แมว</td>
+                        <td><span style="display:flex;justify-content:center;align-items:center;gap:10px;width:100%;"><span title="คัดลอก">📋</span><span title="ฟังเสียง">🔊</span></span></td>
+                    </tr>
+                    <!-- ...existing code... -->
+                </tbody>
+            </table>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <hr class="sakura-divider">
+        <p>&copy; 2025 พจนานุกรม ไทย-อังกฤษ. All rights reserved. | Theme: Sakura 🌸<br>
+        ติดต่อ: <a href="mailto:ddotdka4@email.com" style="color:#b45a8d;text-decoration:underline;">your@email.com</a></p>
+        <div id="sakura-petal-container"></div>
+    </footer>
+    <script src="js/script.js"></script>
+    <script src="js/sakura-extra.js"></script>
+    <script>
+    // นับจำนวนคำศัพท์ในตารางแล้วแสดงผล
+    document.addEventListener('DOMContentLoaded', function() {
+      var table = document.querySelector('.word-list table');
+      if (table) {
+        var count = table.querySelectorAll('tbody tr').length;
+        var wordCountDiv = document.getElementById('word-count');
+        if (wordCountDiv) {
+          wordCountDiv.innerHTML = '🔢 <b>จำนวนคำศัพท์:</b> ' + count + ' คำ';
+        }
+      }
+
+      // Flashcard Mode
+      var flashcardMode = false;
+      var flashcardBtn = document.getElementById('flashcard-toggle');
+      var allRows = table.querySelectorAll('tbody tr');
+      var flashcardState = [];
+      allRows.forEach(function(row, idx) {
+        flashcardState[idx] = false;
+      });
+
+      function setFlashcardMode(on) {
+        flashcardMode = on;
+        if (on) {
+          flashcardBtn.textContent = '❓ Flashcard: ON';
+          allRows.forEach(function(row, idx) {
+            // ซ่อนความหมาย (ไทย) และ action ปุ่ม
+            row.querySelectorAll('td').forEach(function(td, i) {
+              if (i === 2 || i === 3) {
+                td.style.background = '#fbeaf6';
+                td.style.color = '#eec6e6';
+                td.style.cursor = 'pointer';
+                td.textContent = (i === 2) ? 'คลิกเพื่อแสดง' : '...';
+              }
+            });
+            flashcardState[idx] = false;
+          });
+        } else {
+          flashcardBtn.textContent = '🔄 Flashcard Mode';
+          // คืนค่าทุก cell
+          location.reload(); // reload เพื่อคืนค่าตาราง (ง่ายสุด)
+        }
+      }
+
+      if (flashcardBtn) {
+        flashcardBtn.addEventListener('click', function() {
+          setFlashcardMode(!flashcardMode);
+        });
+      }
+
+      // คลิกเพื่อแสดงคำตอบ
+      allRows.forEach(function(row, idx) {
+        row.addEventListener('click', function(e) {
+          if (!flashcardMode) return;
+          var tds = row.querySelectorAll('td');
+          if (!flashcardState[idx]) {
+            // แสดงความหมายและปุ่ม action จริง
+            var realMeaning = [
+              tds[0].getAttribute('data-en') || tds[0].textContent,
+              tds[1].getAttribute('data-pron') || tds[1].textContent,
+              tds[2].getAttribute('data-th') || tds[2].textContent,
+              tds[3].getAttribute('data-action') || tds[3].innerHTML
+            ];
+            tds[2].style.background = '';
+            tds[2].style.color = '';
+            tds[2].style.cursor = '';
+            tds[2].textContent = realMeaning[2];
+            tds[3].style.background = '';
+            tds[3].style.color = '';
+            tds[3].style.cursor = '';
+            tds[3].innerHTML = realMeaning[3];
+            flashcardState[idx] = true;
+          }
+        });
+      });
+    });
+    </script>
