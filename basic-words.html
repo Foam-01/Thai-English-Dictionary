@@ -631,5 +631,44 @@
           }
         });
       });
+
+      // 📋/🔊 Action: คัดลอก/ฟังเสียง
+      allRows.forEach(function(row) {
+        var tds = row.querySelectorAll('td');
+        if (tds.length < 4) return;
+        var actionCell = tds[3];
+        var enWord = tds[0].textContent.trim();
+        // ใช้ event delegation เฉพาะใน action cell
+        actionCell.addEventListener('click', function(e) {
+          var target = e.target;
+          if (target.textContent === '📋') {
+            // คัดลอกคำศัพท์อังกฤษ
+            navigator.clipboard.writeText(enWord).then(function() {
+              target.title = 'คัดลอกแล้ว!';
+              target.style.color = '#b45a8d';
+              setTimeout(function() {
+                target.title = 'คัดลอก';
+                target.style.color = '';
+              }, 900);
+            });
+            e.stopPropagation();
+          } else if (target.textContent === '🔊') {
+            // ฟังเสียงคำศัพท์อังกฤษ
+            if ('speechSynthesis' in window) {
+              var utter = new SpeechSynthesisUtterance(enWord);
+              utter.lang = 'en-US';
+              utter.rate = 0.95;
+              window.speechSynthesis.speak(utter);
+              target.title = 'กำลังอ่าน...';
+              setTimeout(function() {
+                target.title = 'ฟังเสียง';
+              }, 1200);
+            } else {
+              alert('เบราว์เซอร์นี้ไม่รองรับฟีเจอร์ฟังเสียง');
+            }
+            e.stopPropagation();
+          }
+        });
+      });
     });
     </script>
