@@ -1,3 +1,67 @@
+# 🇹🇭 Thai-English Dictionary
+
+This project presents a collection of essential English vocabulary words with **Thai meanings** and **pronunciations**, organized in a simple, user-friendly HTML format.
+
+📘 Useful for students, self-learners, and anyone looking to build a strong English foundation.
+
+---
+
+## 🛠️ Technologies Used
+
+- **HTML5 & CSS3** — For creating clean, fast-loading pages  
+- **No JavaScript** — Focus on simplicity and compatibility  
+- **Responsive Design** — Can be viewed on mobile or desktop browsers
+
+---
+
+## ✨ Features
+
+✅ 1,000+ basic English words with:  
+- Thai meaning  
+- Thai pronunciation (คำอ่าน)  
+
+✅ Categorized into topics such as:  
+- Basic Words  
+- Common Words  
+- Nouns & Phrases  
+- Verbs & Adjectives
+
+✅ Pages:  
+- `index.html` — Main index  
+- `basic-words.html` — 100+ fundamental words  
+- `common-words-example.html` — Frequently used words with examples  
+- `nouns-phrases-1.html` & `nouns-phrases-2.html` — Noun phrases  
+- `verbs-adjectives.html` — Key verbs and adjectives
+
+✅ Clear layout for reading and studying  
+✅ Fully offline — just open in your browser
+
+---
+
+## 🚀 How to Use
+
+1. Download or clone this repository  
+2. Open `index.html` in your browser (e.g., Chrome, Firefox, Edge)  
+3. Navigate through different vocabulary categories via links
+
+---
+
+## 📄 Purpose
+
+This project is designed for:
+
+- Learners of English as a second language  
+- Thai students who want to improve vocabulary  
+- Teachers and tutors preparing materials  
+- Quick reference for daily use
+
+---
+
+> Made with care by **Foam-01** 💙  
+> Free to use, study, and share.
+
+
+
 url: https://thai-english-dictionary.netlify.app/
 <img width="1882" height="970" alt="image" src="https://github.com/user-attachments/assets/d3e16461-277d-4d75-8cc9-d9e634e10c58" />
 <img width="1897" height="971" alt="image" src="https://github.com/user-attachments/assets/feb1f923-39a5-4b82-9e81-702b3fcc145c" />
