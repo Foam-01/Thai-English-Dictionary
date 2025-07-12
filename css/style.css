@@ -1,3 +1,41 @@
+/* ปุ่ม action ในตาราง (เช่น คัดลอก/ฟังเสียง) */
+.sakura-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  font-size: 1.25rem;
+  border-radius: 50%;
+  background: #fff6fa;
+  border: 1.5px solid #eec6e6;
+  color: #b45a8d;
+  cursor: pointer;
+  transition: background 0.18s, box-shadow 0.18s, border 0.18s, transform 0.13s cubic-bezier(.4,1.4,.6,1);
+  margin: 0 2px;
+  box-shadow: 0 1px 4px #fbeaf6;
+  outline: none;
+}
+.sakura-action-btn:hover, .sakura-action-btn:focus {
+  background: #fbeaf6;
+  border: 1.5px solid #b45a8d;
+  color: #a13c7a;
+  box-shadow: 0 2px 8px #eec6e6;
+  transform: scale(1.13) rotate(-6deg);
+}
+.sakura-action-btn:active {
+  background: #ffe6f2;
+  color: #fff;
+  border: 1.5px solid #a13c7a;
+  box-shadow: 0 2px 12px #eec6e6;
+  transform: scale(0.92) rotate(2deg);
+  animation: sakura-btn-pulse 0.22s cubic-bezier(.4,1.4,.6,1);
+}
+@keyframes sakura-btn-pulse {
+  0% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.18) rotate(-8deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
 /* Sakura Divider */
 .sakura-divider {
     width: 80%;
