@@ -1,4 +1,4 @@
-# 🇹🇭 Thai-English Dictionary
+# Thai-English Dictionary
 
 This project presents a collection of essential English vocabulary words with **Thai meanings** and **pronunciations**, organized in a simple, user-friendly HTML format.
 
