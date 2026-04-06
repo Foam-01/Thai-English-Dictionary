@@ -1,320 +1,3364 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>พจนานุกรม ไทย-อังกฤษ</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-    <header class="sakura-header" style="position:relative;overflow:hidden;">
-        <div class="sakura-header-inner">
-            <div style="position:relative;z-index:2;">
-                <h1 style="font-size:2.8rem;letter-spacing:2px;font-weight:900;color:#b45a8d;text-shadow:0 2px 12px #f8bbd099,0 0 8px #fff0f6;">
-                    🌸 พจนานุกรม ไทย-อังกฤษ
-                </h1>
-                <span class="sakura-highlight"></span>
-                <p style="font-size:1.18rem;color:#a13c7a;margin:10px 0 18px 0;font-weight:500;">รวมคำศัพท์อังกฤษ-ไทย พร้อมฟีเจอร์ค้นหา ฟังเสียง คัดลอก และแฟลชการ์ด<br>เพลิดเพลินกับธีมซากุระสุดน่ารัก!</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>พจนานุกรม</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, sans-serif;
+        background: #fffafa;
+        overflow-x: hidden;
+      }
+      #app {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #fff5f8 0%, #ffeef5 100%);
+        position: relative;
+      }
+      canvas#sakura {
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 999;
+        width: 100%;
+        height: 100%;
+      }
+      header {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(8px);
+        padding: 14px 20px;
+        border-bottom: 1px solid #f5c6dd;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      header h1 {
+        font-size: 16px;
+        font-weight: 600;
+        color: #b5476e;
+      }
+      nav {
+        display: flex;
+        gap: 8px;
+      }
+      nav button {
+        padding: 7px 16px;
+        border-radius: 20px;
+        border: 1px solid #f0a0c0;
+        background: white;
+        color: #b5476e;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 500;
+        transition: 0.2s;
+      }
+      nav button:hover {
+        background: #fff0f5;
+      }
+      nav button.active {
+        background: #e8638c;
+        color: white;
+        border-color: #e8638c;
+      }
+      main {
+        padding: 20px;
+        max-width: 960px;
+        margin: 0 auto;
+      }
+      .search-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+      .count-badge {
+        background: #fde8f0;
+        color: #b5476e;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        white-space: nowrap;
+        font-weight: 500;
+      }
+      input[type="text"] {
+        flex: 1;
+        padding: 9px 16px;
+        border-radius: 20px;
+        border: 1px solid #f0c0d4;
+        font-size: 14px;
+        outline: none;
+        background: white;
+        font-family: inherit;
+      }
+      input[type="text"]:focus {
+        border-color: #e8638c;
+      }
+      .table-wrap {
+        max-height: calc(100vh - 180px);
+        overflow-y: auto;
+        border-radius: 12px;
+        border: 1px solid #f5d0e4;
+        background: rgba(255, 255, 255, 0.95);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      thead th {
+        background: #fde8f0;
+        color: #b5476e;
+        padding: 10px 12px;
+        text-align: left;
+        position: sticky;
+        top: 0;
+        font-weight: 600;
+        z-index: 1;
+      }
+      tbody tr:hover {
+        background: #fff5f9;
+      }
+      tbody td {
+        padding: 9px 12px;
+        border-bottom: 1px solid #fde8f0;
+      }
+      .speak-btn {
+        background: none;
+        border: 1px solid #f0c0d4;
+        border-radius: 8px;
+        padding: 3px 8px;
+        cursor: pointer;
+        font-size: 14px;
+        color: #b5476e;
+        transition: 0.2s;
+      }
+      .speak-btn:hover {
+        background: #fde8f0;
+      }
+      /* Game */
+      #game-view {
+        text-align: center;
+        padding-top: 20px;
+      }
+      .game-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        border: 1px solid #f5d0e4;
+        padding: 30px;
+        max-width: 520px;
+        margin: 0 auto;
+        box-shadow: 0 8px 30px rgba(232, 99, 140, 0.1);
+      }
+      .score-row {
+        display: flex;
+        justify-content: center;
+        gap: 32px;
+        margin-bottom: 20px;
+      }
+      .score-box {
+        text-align: center;
+      }
+      .score-num {
+        font-size: 28px;
+        font-weight: 700;
+        color: #c23e70;
+        display: block;
+      }
+      .score-label {
+        font-size: 12px;
+        color: #b09;
+      }
+      .question-label {
+        color: #b5476e;
+        font-size: 13px;
+        margin-bottom: 8px;
+      }
+      .word-en {
+        font-size: 2.6rem;
+        font-weight: 700;
+        color: #c23e70;
+        letter-spacing: 1px;
+        margin: 8px 0 4px;
+      }
+      .word-read {
+        font-size: 13px;
+        color: #b09;
+        margin-bottom: 16px;
+      }
+      .options {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin: 16px 0;
+      }
+      .opt {
+        padding: 14px 8px;
+        border-radius: 14px;
+        border: 1.5px solid #f0c0d4;
+        background: white;
+        cursor: pointer;
+        font-size: 14px;
+        color: #333;
+        transition: 0.2s;
+        font-family: inherit;
+        line-height: 1.3;
+      }
+      .opt:hover:not(:disabled) {
+        background: #fde8f0;
+        border-color: #e8638c;
+        transform: translateY(-1px);
+      }
+      .opt:disabled {
+        cursor: not-allowed;
+      }
+      .opt.correct {
+        background: #d4edda;
+        border-color: #5cb85c;
+        color: #1a5c2a;
+        font-weight: 600;
+      }
+      .opt.wrong {
+        background: #fde8ea;
+        border-color: #e05c5c;
+        color: #7a1a1a;
+      }
+      .feedback {
+        min-height: 36px;
+        margin: 8px 0;
+        font-size: 15px;
+        font-weight: 600;
+        padding: 6px;
+      }
+      .feedback.ok {
+        color: #2a7a2a;
+      }
+      .feedback.no {
+        color: #c0392b;
+      }
+      .next-btn {
+        background: #e8638c;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        padding: 11px 30px;
+        font-size: 14px;
+        cursor: pointer;
+        font-family: inherit;
+        margin-top: 4px;
+        font-weight: 600;
+        transition: 0.2s;
+      }
+      .next-btn:hover {
+        background: #c23e70;
+        transform: translateY(-1px);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="sakura"></canvas>
+
+      <header>
+        <h1>🌸 พจนานุกรม</h1>
+        <nav>
+          <button class="active" id="btn-dict" onclick="showDict()">
+            📖 พจนานุกรม
+          </button>
+          <button id="btn-game" onclick="showGame()">🎮 เกมทายคำ</button>
+        </nav>
+      </header>
+
+      <main>
+        <div id="dict-view">
+          <div class="search-row">
+            <span class="count-badge" id="count-badge">🔢 1,000 คำ</span>
+            <input
+              type="text"
+              id="search"
+              placeholder="🔍 ค้นหา (ไทย / อังกฤษ)..."
+              oninput="filterWords()"
+            />
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>English</th>
+                  <th>คำอ่าน</th>
+                  <th>ความหมาย</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="vocab-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="game-view" style="display: none">
+          <div class="game-card">
+            <div class="score-row">
+              <div class="score-box">
+                <span class="score-num" id="score-correct">0</span
+                ><span class="score-label">ถูก</span>
+              </div>
+              <div class="score-box">
+                <span class="score-num" id="score-total">0</span
+                ><span class="score-label">ทั้งหมด</span>
+              </div>
             </div>
-            <nav style="margin-top:18px;">
-                <div class="sakura-menu-cards" style="display:flex;flex-wrap:wrap;justify-content:center;gap:18px;">
-                    <a class="sakura-menu-card" href="index.html" style="background:#fff0f6;border-radius:18px;padding:18px 32px;box-shadow:0 2px 12px #f8bbd033;border:2px solid #f8bbd0;font-size:1.18rem;font-weight:700;color:#b45a8d;display:flex;align-items:center;gap:10px;transition:transform 0.18s,box-shadow 0.18s;">
-                        <span style="font-size:1.5rem;">🏠</span> หน้าหลัก
-                    </a>
-                    <a class="sakura-menu-card" href="basic-words.html" style="background:#fff0f6;border-radius:18px;padding:18px 32px;box-shadow:0 2px 12px #f8bbd033;border:2px solid #f8bbd0;font-size:1.18rem;font-weight:700;color:#b45a8d;display:flex;align-items:center;gap:10px;transition:transform 0.18s,box-shadow 0.18s;">
-                        <span style="font-size:1.5rem;">🍀</span> คำพื้นฐาน
-                    </a>
-                    <a class="sakura-menu-card" href="verbs-adjectives.html" style="background:#fff0f6;border-radius:18px;padding:18px 32px;box-shadow:0 2px 12px #f8bbd033;border:2px solid #f8bbd0;font-size:1.18rem;font-weight:700;color:#b45a8d;display:flex;align-items:center;gap:10px;transition:transform 0.18s,box-shadow 0.18s;">
-                        <span style="font-size:1.5rem;">🌱</span> คำกริยาและคำคุณศัพท์
-                    </a>
-                    <a class="sakura-menu-card" href="nouns-phrases-1.html" style="background:#fff0f6;border-radius:18px;padding:18px 32px;box-shadow:0 2px 12px #f8bbd033;border:2px solid #f8bbd0;font-size:1.18rem;font-weight:700;color:#b45a8d;display:flex;align-items:center;gap:10px;transition:transform 0.18s,box-shadow 0.18s;">
-                        <span style="font-size:1.5rem;">🌸</span> คำนามและวลี 1
-                    </a>
-                    <a class="sakura-menu-card" href="nouns-phrases-2.html" style="background:#fff0f6;border-radius:18px;padding:18px 32px;box-shadow:0 2px 12px #f8bbd033;border:2px solid #f8bbd0;font-size:1.18rem;font-weight:700;color:#b45a8d;display:flex;align-items:center;gap:10px;transition:transform 0.18s,box-shadow 0.18s;">
-                        <span style="font-size:1.5rem;">🌼</span> คำนามและวลี 2
-                    </a>
-                </div>
-            </nav>
-        </div>
-    </header>
-
-    <main>
-        <section class="sakura-intro" style="background:linear-gradient(90deg,#ffe6f2 0%,#e3f0ff 100%);border-radius:18px;box-shadow:0 2px 18px #f8bbd033;padding:32px 10px 24px 10px;color:#b45a8d;font-size:1.18rem;font-weight:500;text-align:center;max-width:700px;margin:0 auto 30px auto;">
-            <h2 style="color:#b45a8d;font-size:2.1rem;font-weight:800;letter-spacing:1px;margin-bottom:0.5rem;">
-                <span style="font-size:2.2rem;vertical-align:-2px;">🌸</span> Welcome!
-            </h2>
-            <span class="sakura-highlight"></span>
-            <p style="margin:18px 0 0 0;font-size:1.18rem;color:#a13c7a;line-height:1.7;">
-                แหล่งรวมคำศัพท์อังกฤษ-ไทย พร้อมฟีเจอร์ค้นหา คัดลอก ฟังเสียง แฟลชการ์ด และสุ่มคำศัพท์<br>
-                เพลิดเพลินกับธีมซากุระสุดน่ารัก!
-            </p>
-        </section>
-        <hr class="sakura-divider">
-        <section class="sakura-menu-cards" style="display:flex;flex-wrap:wrap;justify-content:center;gap:18px;margin-bottom:32px;">
-            <a class="sakura-menu-card" href="basic-words.html" style="background:#fff0f6;border-radius:18px;padding:18px 32px;box-shadow:0 2px 12px #f8bbd033;border:2px solid #f8bbd0;font-size:1.18rem;font-weight:700;color:#b45a8d;display:flex;align-items:center;gap:10px;transition:transform 0.18s,box-shadow 0.18s;">
-                <span style="font-size:1.5rem;">🍀</span> คำพื้นฐาน
-            </a>
-            <a class="sakura-menu-card" href="verbs-adjectives.html" style="background:#fff0f6;border-radius:18px;padding:18px 32px;box-shadow:0 2px 12px #f8bbd033;border:2px solid #f8bbd0;font-size:1.18rem;font-weight:700;color:#b45a8d;display:flex;align-items:center;gap:10px;transition:transform 0.18s,box-shadow 0.18s;">
-                <span style="font-size:1.5rem;">🌱</span> คำกริยาและคำคุณศัพท์
-            </a>
-            <a class="sakura-menu-card" href="nouns-phrases-1.html" style="background:#fff0f6;border-radius:18px;padding:18px 32px;box-shadow:0 2px 12px #f8bbd033;border:2px solid #f8bbd0;font-size:1.18rem;font-weight:700;color:#b45a8d;display:flex;align-items:center;gap:10px;transition:transform 0.18s,box-shadow 0.18s;">
-                <span style="font-size:1.5rem;">🌸</span> คำนามและวลี 1
-            </a>
-            <a class="sakura-menu-card" href="nouns-phrases-2.html" style="background:#fff0f6;border-radius:18px;padding:18px 32px;box-shadow:0 2px 12px #f8bbd033;border:2px solid #f8bbd0;font-size:1.18rem;font-weight:700;color:#b45a8d;display:flex;align-items:center;gap:10px;transition:transform 0.18s,box-shadow 0.18s;">
-                <span style="font-size:1.5rem;">🌼</span> คำนามและวลี 2
-            </a>
-            <button id="practice-btn" style="background:#ffe6f2;color:#b45a8d;font-size:1.18rem;font-weight:700;padding:18px 32px;border-radius:18px;border:2px solid #f8bbd0;box-shadow:0 2px 12px #f8bbd033;cursor:pointer;transition:background 0.18s,box-shadow 0.18s;display:flex;align-items:center;gap:10px;">
-                <span style="font-size:1.5rem;">📝</span> แบบทดสอบภาษาอังกฤษ
+            <p class="question-label">คำนี้แปลว่าอะไร?</p>
+            <div class="word-en" id="q-word">—</div>
+            <div class="word-read" id="q-read"></div>
+            <div class="options" id="options"></div>
+            <div class="feedback" id="feedback"></div>
+            <button
+              class="next-btn"
+              id="next-btn"
+              onclick="nextQ()"
+              style="display: none"
+            >
+              คำถัดไป 🌸
             </button>
-        </section>
-    </main>
-
-    <footer class="footer">
-        <hr class="sakura-divider">
-        <div class="footer-inner">
-            &copy; 2025 พจนานุกรม ไทย-อังกฤษ. Sakura Theme by YourName.<br>
-            ติดต่อ: <a href="mailto:ddotdka4@email.com" style="color:#b45a8d;text-decoration:underline;">your@email.com</a>
+          </div>
         </div>
-    </footer>
+      </main>
+    </div>
 
-    <script src="js/script.js"></script>
-    <script src="js/sakura-extra.js"></script>
-</body>
-<!-- Practice Quiz Modal -->
-<div id="practice-modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100vw;height:100vh;background:rgba(255,240,246,0.96);backdrop-filter:blur(2px);align-items:center;justify-content:center;">
-  <div style="background:#fff;border-radius:18px;box-shadow:0 2px 24px #eec6e6;padding:32px 24px;max-width:350px;width:90vw;text-align:center;position:relative;">
-    <button id="close-practice" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:1.5rem;color:#b45a8d;cursor:pointer;">×</button>
-    <h3 style="color:#b45a8d;font-size:1.3rem;margin-bottom:18px;">📝 ฝึกแปลอังกฤษ-ไทย</h3>
-    <div id="quiz-question" style="font-size:1.15rem;margin-bottom:12px;"></div>
-    <input id="quiz-answer" type="text" placeholder="พิมพ์คำแปลเป็นไทย..." style="width:90%;padding:8px 10px;border-radius:8px;border:1px solid #eec6e6;font-size:1.08rem;margin-bottom:10px;">
-    <div id="quiz-feedback" style="min-height:24px;font-size:1.05rem;margin-bottom:10px;"></div>
-    <button id="quiz-submit" style="background:#fff0fa;border:1px solid #eec6e6;color:#b45a8d;padding:7px 18px;border-radius:8px;cursor:pointer;font-size:1rem;">ตรวจคำตอบ</button>
-    <button id="quiz-show-answer" style="background:#fbeaf6;border:1px solid #eec6e6;color:#b45a8d;padding:7px 18px;border-radius:8px;cursor:pointer;font-size:1rem;margin-left:8px;">ดูเฉลย</button>
-    <button id="quiz-next" style="display:none;background:#e3f0ff;border:1px solid #b45a8d;color:#b45a8d;padding:7px 18px;border-radius:8px;cursor:pointer;font-size:1rem;margin-left:8px;">ข้อต่อไป</button>
-  </div>
-</div>
-<script>
-// --- Quiz: รวมคำศัพท์จากทุกหน้าไว้ในไฟล์นี้ (offline/fetchless) ---
-let quizWords = [
-  // basic-words.html
-  { en: 'Good Bye', th: 'ลาก่อน' },
-  { en: 'We wish you a merry Christmas', th: 'เราขอให้คุณมีความสุขในวันคริสต์มาส' },
-  { en: 'Thank you very much', th: 'ขอบคุณมาก' },
-  { en: 'What are you doing?', th: 'คุณทำอะไรอยู่?' },
-  { en: 'How are you?', th: 'คุณเป็นอย่างไรบ้าง?' },
-  { en: 'My name is', th: 'ฉันชื่อ' },
-  { en: 'What is this?', th: 'นี่คืออะไร?' },
-  { en: 'Do you speak Thai?', th: 'คุณพูดภาษาไทยได้ไหม?' },
-  { en: 'Yes, I do', th: 'ครับ/ค่ะ ได้' },
-  { en: 'No, I don\'t', th: 'ไม่ได้' },
-  { en: 'Please', th: 'ได้โปรด' },
-  { en: 'Excuse me', th: 'ขอโทษ' },
-  { en: 'Sorry', th: 'เสียใจ' },
-  { en: 'Father', th: 'พ่อ' },
-  { en: 'Mother', th: 'แม่' },
-  { en: 'Daughter', th: 'ลูกสาว' },
-  { en: 'Eat', th: 'กิน' },
-  { en: 'Drink', th: 'ดื่ม' },
-  { en: 'Go', th: 'ไป' },
-  { en: 'Come', th: 'มา' },
-  { en: 'See', th: 'เห็น' },
-  { en: 'Hear', th: 'ได้ยิน' },
-  { en: 'Speak', th: 'พูด' },
-  { en: 'Read', th: 'อ่าน' },
-  { en: 'Write', th: 'เขียน' },
-  { en: 'Walk', th: 'เดิน' },
-  { en: 'Run', th: 'วิ่ง' },
-  { en: 'Sleep', th: 'นอน' },
-  { en: 'Wake up', th: 'ตื่น' },
-  { en: 'Buy', th: 'ซื้อ' },
-  { en: 'Sell', th: 'ขาย' },
-  { en: 'Open', th: 'เปิด' },
-  { en: 'Close', th: 'ปิด' },
-  { en: 'Hot', th: 'ร้อน' },
-  { en: 'Cold', th: 'เย็น' },
-  { en: 'Big', th: 'ใหญ่' },
-  { en: 'Small', th: 'เล็ก' },
-  { en: 'Beautiful', th: 'สวย' },
-  { en: 'Handsome', th: 'หล่อ' },
-  { en: 'Happy', th: 'มีความสุข' },
-  { en: 'Sad', th: 'เศร้า' },
-  { en: 'Angry', th: 'โกรธ' },
-  { en: 'Love', th: 'รัก' },
-  { en: 'Like', th: 'ชอบ' },
-  { en: 'Dislike', th: 'ไม่ชอบ' },
-  { en: 'Friend', th: 'เพื่อน' },
-  { en: 'Family', th: 'ครอบครัว' },
-  { en: 'School', th: 'โรงเรียน' },
-  { en: 'Teacher', th: 'ครู' },
-  { en: 'Student', th: 'นักเรียน' },
-  { en: 'Book', th: 'หนังสือ' },
-  { en: 'Pencil', th: 'ดินสอ' },
-  { en: 'Pen', th: 'ปากกา' },
-  { en: 'Bag', th: 'กระเป๋า' },
-  { en: 'Table', th: 'โต๊ะ' },
-  { en: 'Chair', th: 'เก้าอี้' },
-  { en: 'Window', th: 'หน้าต่าง' },
-  { en: 'Door', th: 'ประตู' },
-  { en: 'House', th: 'บ้าน' },
-  { en: 'Room', th: 'ห้อง' },
-  { en: 'Kitchen', th: 'ห้องครัว' },
-  { en: 'Bathroom', th: 'ห้องน้ำ' },
-  { en: 'Bed', th: 'เตียง' },
-  { en: 'Car', th: 'รถยนต์' },
-  { en: 'Bus', th: 'รถบัส' },
-  { en: 'Train', th: 'รถไฟ' },
-  { en: 'Airplane', th: 'เครื่องบิน' },
-  { en: 'Boat', th: 'เรือ' },
-  { en: 'Street', th: 'ถนน' },
-  { en: 'Market', th: 'ตลาด' },
-  { en: 'Shop', th: 'ร้านค้า' },
-  { en: 'Money', th: 'เงิน' },
-  { en: 'Food', th: 'อาหาร' },
-  { en: 'Fruit', th: 'ผลไม้' },
-  { en: 'Vegetable', th: 'ผัก' },
-  { en: 'Rice', th: 'ข้าว' },
-  { en: 'Egg', th: 'ไข่' },
-  { en: 'Chicken', th: 'ไก่' },
-  { en: 'Fish', th: 'ปลา' },
-  { en: 'Dog', th: 'สุนัข' },
-  { en: 'Cat', th: 'แมว' },
-  // verbs-adjectives.html (ตัวอย่าง)
-  { en: 'Run', th: 'วิ่ง' },
-  { en: 'Jump', th: 'กระโดด' },
-  { en: 'Swim', th: 'ว่ายน้ำ' },
-  { en: 'Sing', th: 'ร้องเพลง' },
-  { en: 'Dance', th: 'เต้นรำ' },
-  { en: 'Eat', th: 'กิน' },
-  { en: 'Drink', th: 'ดื่ม' },
-  { en: 'Sleep', th: 'นอน' },
-  { en: 'Read', th: 'อ่าน' },
-  { en: 'Write', th: 'เขียน' },
-  { en: 'Speak', th: 'พูด' },
-  { en: 'Listen', th: 'ฟัง' },
-  { en: 'Walk', th: 'เดิน' },
-  { en: 'Drive', th: 'ขับรถ' },
-  { en: 'Fly', th: 'บิน' },
-  { en: 'Tall', th: 'สูง' },
-  { en: 'Short', th: 'เตี้ย' },
-  { en: 'Big', th: 'ใหญ่' },
-  { en: 'Small', th: 'เล็ก' },
-  { en: 'Fast', th: 'เร็ว' },
-  { en: 'Slow', th: 'ช้า' },
-  { en: 'Hot', th: 'ร้อน' },
-  { en: 'Cold', th: 'เย็น' },
-  { en: 'Happy', th: 'มีความสุข' },
-  { en: 'Sad', th: 'เศร้า' },
-  { en: 'Angry', th: 'โกรธ' },
-  { en: 'Beautiful', th: 'สวย' },
-  { en: 'Handsome', th: 'หล่อ' },
-  { en: 'Strong', th: 'แข็งแรง' },
-  { en: 'Weak', th: 'อ่อนแอ' },
-  // nouns-phrases-1.html (ตัวอย่าง)
-  { en: 'Mother and father', th: 'พ่อและแม่' },
-  { en: 'Brother', th: 'พี่ชาย/น้องชาย' },
-  { en: 'Sister', th: 'พี่สาว/น้องสาว' },
-  { en: 'Grandfather', th: 'ปู่/ตา' },
-  { en: 'Grandmother', th: 'ย่า/ยาย' },
-  { en: 'Uncle', th: 'ลุง/อา/น้า' },
-  { en: 'Aunt', th: 'ป้า/น้า/อา' },
-  { en: 'Cousin', th: 'ลูกพี่ลูกน้อง' },
-  { en: 'Friend', th: 'เพื่อน' },
-  { en: 'Teacher', th: 'ครู' },
-  { en: 'Student', th: 'นักเรียน' },
-  { en: 'Doctor', th: 'หมอ' },
-  { en: 'Nurse', th: 'พยาบาล' },
-  { en: 'Police', th: 'ตำรวจ' },
-  { en: 'Soldier', th: 'ทหาร' },
-  { en: 'Farmer', th: 'ชาวนา' },
-  { en: 'Engineer', th: 'วิศวกร' },
-  { en: 'Artist', th: 'ศิลปิน' },
-  // nouns-phrases-2.html (ตัวอย่าง)
-  { en: 'Hospital', th: 'โรงพยาบาล' },
-  { en: 'School', th: 'โรงเรียน' },
-  { en: 'Market', th: 'ตลาด' },
-  { en: 'Shop', th: 'ร้านค้า' },
-  { en: 'Bank', th: 'ธนาคาร' },
-  { en: 'Post office', th: 'ไปรษณีย์' },
-  { en: 'Police station', th: 'สถานีตำรวจ' },
-  { en: 'Bus stop', th: 'ป้ายรถเมล์' },
-  { en: 'Airport', th: 'สนามบิน' },
-  { en: 'Restaurant', th: 'ร้านอาหาร' },
-  { en: 'Hotel', th: 'โรงแรม' },
-  { en: 'Park', th: 'สวนสาธารณะ' },
-  { en: 'Temple', th: 'วัด' },
-  { en: 'Church', th: 'โบสถ์' },
-  { en: 'Mosque', th: 'มัสยิด' },
-  { en: 'Library', th: 'ห้องสมุด' },
-  { en: 'Zoo', th: 'สวนสัตว์' },
-];
-let quizIdx = 0;
-let quizOrder = [];
-function shuffleQuiz() {
-  quizOrder = [...Array(quizWords.length).keys()];
-  for (let i = quizOrder.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [quizOrder[i], quizOrder[j]] = [quizOrder[j], quizOrder[i]];
-  }
-}
-function showQuiz(idx) {
-  const q = quizWords[quizOrder[idx]];
-  document.getElementById('quiz-question').innerHTML = `<b>${q.en}</b> แปลเป็นไทย:`;
-  document.getElementById('quiz-answer').value = '';
-  document.getElementById('quiz-feedback').textContent = '';
-  document.getElementById('quiz-submit').style.display = '';
-  document.getElementById('quiz-next').style.display = 'none';
-  document.getElementById('quiz-show-answer').style.display = '';
-  document.getElementById('quiz-answer').disabled = false;
-}
-document.getElementById('practice-btn').onclick = function() {
-  if (quizWords.length === 0) {
-    alert('ไม่พบคำศัพท์ในตาราง');
-    return;
-  }
-  document.getElementById('quiz-answer').style.display = '';
-  document.getElementById('practice-modal').style.display = 'flex';
-  shuffleQuiz(); quizIdx = 0; showQuiz(quizIdx);
-}
-document.getElementById('close-practice').onclick = function() {
-  document.getElementById('practice-modal').style.display = 'none';
-}
-document.getElementById('quiz-submit').onclick = function() {
-  const ans = document.getElementById('quiz-answer').value.trim();
-  const q = quizWords[quizOrder[quizIdx]];
-  if (ans === q.th) {
-    document.getElementById('quiz-feedback').innerHTML = '<span style="color:#43a047;">✅ ถูกต้อง!</span>';
-    document.getElementById('quiz-submit').style.display = 'none';
-    document.getElementById('quiz-next').style.display = '';
-    document.getElementById('quiz-show-answer').style.display = 'none';
-    document.getElementById('quiz-answer').disabled = true;
-  } else {
-    document.getElementById('quiz-feedback').innerHTML = '<span style="color:#e53935;">❌ ลองใหม่อีกครั้ง</span>';
-  }
-}
-// กด Enter ที่ input เพื่อตรวจคำตอบ
-document.getElementById('quiz-answer').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && !this.disabled) {
-    document.getElementById('quiz-submit').click();
-  }
-});
-document.getElementById('quiz-show-answer').onclick = function() {
-  const q = quizWords[quizOrder[quizIdx]];
-  document.getElementById('quiz-feedback').innerHTML = `<span style='color:#b45a8d;'>เฉลย: <b>${q.th}</b></span>`;
-  document.getElementById('quiz-show-answer').style.display = 'none';
-};
-document.getElementById('quiz-next').onclick = function() {
-  quizIdx++;
-  if (quizIdx < quizWords.length) {
-    showQuiz(quizIdx);
-  } else {
-    document.getElementById('quiz-question').innerHTML = 'จบแบบฝึกหัด!';
-    document.getElementById('quiz-answer').style.display = 'none';
-    document.getElementById('quiz-submit').style.display = 'none';
-    document.getElementById('quiz-next').style.display = 'none';
-    document.getElementById('quiz-show-answer').style.display = 'none';
-    document.getElementById('quiz-feedback').innerHTML = '<span style="color:#b45a8d;">คุณทำครบทุกข้อแล้ว 🎉</span>';
-  }
-}
-</script>
-</body>
+    <script>
+      const words = [
+        { en: "Abandon", read: "อะ-แบน-เดิน", th: "ละทิ้ง" },
+        { en: "Ability", read: "อะ-บิล-ลิ-ตี้", th: "ความสามารถ" },
+        { en: "Absolute", read: "แอบ-โซ-ลูท", th: "สมบูรณ์แบบ" },
+        { en: "Absorb", read: "แอบ-ซอร์บ", th: "ดูดซับ" },
+        { en: "Abstract", read: "แอบ-สแตร็คท์", th: "นามธรรม" },
+        { en: "Academic", read: "แอค-คะ-เด็ม-มิค", th: "วิชาการ" },
+        { en: "Accept", read: "แอค-เซ็พท์", th: "ยอมรับ" },
+        { en: "Access", read: "แอค-เซส", th: "การเข้าถึง" },
+        { en: "Accident", read: "แอค-ซิ-เด็นท์", th: "อุบัติเหตุ" },
+        { en: "Achieve", read: "อะ-ชีฟ", th: "บรรลุ" },
+        { en: "Action", read: "แอค-ชั่น", th: "การกระทำ" },
+        { en: "Active", read: "แอค-ทิฟ", th: "กระตือรือร้น" },
+        { en: "Actual", read: "แอค-ชวล", th: "ที่แท้จริง" },
+        { en: "Adapt", read: "อะ-แด็พท์", th: "ปรับตัว" },
+        { en: "Adequate", read: "แอด-ดิ-เควท", th: "เพียงพอ" },
+        { en: "Adventure", read: "แอด-เวน-เจอร์", th: "การผจญภัย" },
+        { en: "Advice", read: "แอด-ไวซ์", th: "คำแนะนำ" },
+        { en: "Afford", read: "อะ-ฟอร์ด", th: "มีเงินพอซื้อ" },
+        { en: "Afraid", read: "อะ-เฟร็ด", th: "กลัว" },
+        { en: "Agent", read: "เอ-เจนท์", th: "ตัวแทน" },
+        { en: "Agree", read: "อะ-กรี", th: "เห็นด้วย" },
+        { en: "Airport", read: "แอร์-พอร์ท", th: "สนามบิน" },
+        { en: "Allow", read: "อะ-เลา", th: "อนุญาต" },
+        { en: "Almost", read: "ออล-โมสท์", th: "เกือบ" },
+        { en: "Already", read: "ออล-เรด-ดี", th: "แล้ว" },
+        { en: "Although", read: "ออล-โธ", th: "แม้ว่า" },
+        { en: "Ancient", read: "เอน-เชี่ยนท์", th: "โบราณ" },
+        { en: "Anger", read: "แอง-เกอร์", th: "ความโกรธ" },
+        { en: "Animal", read: "แอน-นิ-มอล", th: "สัตว์" },
+        { en: "Answer", read: "แอน-เซอร์", th: "คำตอบ" },
+        { en: "Anxiety", read: "แอง-ไซ-เอ-ตี้", th: "ความวิตกกังวล" },
+        { en: "Approach", read: "อะ-โพรช", th: "เข้าหา" },
+        { en: "Approve", read: "อะ-พรูฟ", th: "อนุมัติ" },
+        { en: "Area", read: "แอร์-เรีย", th: "พื้นที่" },
+        { en: "Argue", read: "อาร์-กิว", th: "โต้เถียง" },
+        { en: "Arrange", read: "อะ-เรนจ์", th: "จัดเตรียม" },
+        { en: "Arrive", read: "อะ-ไรฟ์", th: "มาถึง" },
+        { en: "Artificial", read: "อาร์-ติ-ฟิช-เชียล", th: "เทียม" },
+        { en: "Artist", read: "อาร์-ทิสท์", th: "ศิลปิน" },
+        { en: "Atmosphere", read: "แอท-มอส-เฟียร์", th: "บรรยากาศ" },
+        { en: "Attach", read: "อะ-แทช", th: "แนบ" },
+        { en: "Attempt", read: "อะ-เทมพท์", th: "พยายาม" },
+        { en: "Attend", read: "อะ-เทนด์", th: "เข้าร่วม" },
+        { en: "Attitude", read: "แอท-ติ-ทูด", th: "ทัศนคติ" },
+        { en: "Attract", read: "อะ-แทรคท์", th: "ดึงดูด" },
+        { en: "Authority", read: "อะ-ธอ-ริ-ตี้", th: "อำนาจ" },
+        { en: "Average", read: "แอฟ-เวอ-เรจ", th: "ค่าเฉลี่ย" },
+        { en: "Avoid", read: "อะ-วอยด์", th: "หลีกเลี่ยง" },
+        { en: "Award", read: "อะ-วอร์ด", th: "รางวัล" },
+        { en: "Aware", read: "อะ-แวร์", th: "ตระหนัก" },
+        { en: "Balance", read: "แบล-เลนส์", th: "สมดุล" },
+        { en: "Barrier", read: "แบร์-เรียร์", th: "อุปสรรค" },
+        { en: "Battle", read: "แบท-เทิล", th: "การต่อสู้" },
+        { en: "Behavior", read: "บิ-เฮฟ-เยอร์", th: "พฤติกรรม" },
+        { en: "Believe", read: "บิ-ลีฟ", th: "เชื่อ" },
+        { en: "Benefit", read: "เบน-นิ-ฟิท", th: "ผลประโยชน์" },
+        { en: "Beautiful", read: "บิว-ติ-ฟูล", th: "สวยงาม" },
+        { en: "Birthday", read: "เบิร์ธ-เดย์", th: "วันเกิด" },
+        { en: "Blame", read: "เบลม", th: "โทษ" },
+        { en: "Borrow", read: "บอ-โรว์", th: "ยืม" },
+        { en: "Brave", read: "เบรฟ", th: "กล้าหาญ" },
+        { en: "Break", read: "เบรค", th: "พัก/แตก" },
+        { en: "Bridge", read: "บริดจ์", th: "สะพาน" },
+        { en: "Brilliant", read: "บริล-เลียนท์", th: "ยอดเยี่ยม" },
+        { en: "Budget", read: "บัด-เจท", th: "งบประมาณ" },
+        { en: "Building", read: "บิล-ดิง", th: "อาคาร" },
+        { en: "Business", read: "บิส-เนส", th: "ธุรกิจ" },
+        { en: "Calculate", read: "แคล-คิว-เลท", th: "คำนวณ" },
+        { en: "Calendar", read: "แคล-เลน-เดอร์", th: "ปฏิทิน" },
+        { en: "Campaign", read: "แคม-เพน", th: "แคมเปญ" },
+        { en: "Capable", read: "เค-พะ-เบิล", th: "มีความสามารถ" },
+        { en: "Capital", read: "แคพ-พิ-ทอล", th: "เมืองหลวง" },
+        { en: "Career", read: "คะ-เรียร์", th: "อาชีพ" },
+        { en: "Category", read: "แคท-ทิ-โก-รี่", th: "หมวดหมู่" },
+        { en: "Cause", read: "คอส", th: "สาเหตุ" },
+        { en: "Celebrate", read: "เซล-ลิ-เบรท", th: "ฉลอง" },
+        { en: "Challenge", read: "ชาล-เลนจ์", th: "ความท้าทาย" },
+        { en: "Change", read: "เชนจ์", th: "เปลี่ยนแปลง" },
+        { en: "Character", read: "แคร์-แรค-เทอร์", th: "ตัวละคร/อุปนิสัย" },
+        { en: "Choice", read: "ชอยส์", th: "ตัวเลือก" },
+        { en: "Circle", read: "เซอร์-เคิล", th: "วงกลม" },
+        { en: "Citizen", read: "ซิท-ทิ-เซน", th: "พลเมือง" },
+        { en: "Clarity", read: "แคลร์-ริ-ตี้", th: "ความชัดเจน" },
+        { en: "Classic", read: "แคลส-สิค", th: "คลาสสิค" },
+        { en: "Climate", read: "ไคล-มิท", th: "ภูมิอากาศ" },
+        { en: "Collect", read: "คะ-เลคท์", th: "รวบรวม" },
+        { en: "Combine", read: "คอม-ไบน์", th: "รวมกัน" },
+        { en: "Comfort", read: "คัม-เฟิร์ท", th: "ความสะดวกสบาย" },
+        { en: "Command", read: "คะ-มาน", th: "คำสั่ง" },
+        { en: "Common", read: "คอม-มอน", th: "ทั่วไป" },
+        { en: "Community", read: "คะ-มิว-นิ-ตี้", th: "ชุมชน" },
+        { en: "Compare", read: "คอม-แพร์", th: "เปรียบเทียบ" },
+        { en: "Complete", read: "คอม-พลีท", th: "สมบูรณ์" },
+        { en: "Complex", read: "คอม-เพล็กซ์", th: "ซับซ้อน" },
+        { en: "Condition", read: "คอน-ดิช-ชัน", th: "เงื่อนไข" },
+        { en: "Conflict", read: "คอน-ฟลิคท์", th: "ความขัดแย้ง" },
+        { en: "Connect", read: "คะ-เนคท์", th: "เชื่อมต่อ" },
+        { en: "Consider", read: "คอน-ซิด-เดอร์", th: "พิจารณา" },
+        { en: "Control", read: "คอน-โทรล", th: "ควบคุม" },
+        { en: "Convince", read: "คอน-วินซ์", th: "โน้มน้าว" },
+        { en: "Cooperate", read: "โค-ออป-เพอ-เรท", th: "ร่วมมือ" },
+        { en: "Courage", read: "คัร์-เรจ", th: "ความกล้าหาญ" },
+        { en: "Create", read: "ครี-เอท", th: "สร้าง" },
+        { en: "Crisis", read: "ไคร-ซิส", th: "วิกฤต" },
+        { en: "Culture", read: "คัล-เชอร์", th: "วัฒนธรรม" },
+        { en: "Current", read: "คัร์-เรนท์", th: "ปัจจุบัน" },
+        { en: "Cycle", read: "ไซ-เคิล", th: "วัฏจักร" },
+        { en: "Damage", read: "แดม-มิจ", th: "ความเสียหาย" },
+        { en: "Dangerous", read: "เดน-เจอ-รัส", th: "อันตราย" },
+        { en: "Decision", read: "ดิ-ซิ-ชัน", th: "การตัดสินใจ" },
+        { en: "Declare", read: "ดิ-แคลร์", th: "ประกาศ" },
+        { en: "Decrease", read: "ดี-ครีส", th: "ลดลง" },
+        { en: "Defeat", read: "ดิ-ฟีท", th: "พ่ายแพ้" },
+        { en: "Define", read: "ดิ-ไฟน์", th: "นิยาม" },
+        { en: "Deliver", read: "ดิ-ลิฟ-เวอร์", th: "ส่งมอบ" },
+        { en: "Democracy", read: "ดิ-มอค-ครา-ซี่", th: "ประชาธิปไตย" },
+        { en: "Depend", read: "ดิ-เพนด์", th: "ขึ้นอยู่กับ" },
+        { en: "Describe", read: "ดิ-สไครบ์", th: "บรรยาย" },
+        { en: "Design", read: "ดิ-ไซน์", th: "ออกแบบ" },
+        { en: "Desire", read: "ดิ-ไซร์", th: "ความปรารถนา" },
+        { en: "Destroy", read: "ดิส-ทรอย", th: "ทำลาย" },
+        { en: "Detail", read: "ดี-เทล", th: "รายละเอียด" },
+        { en: "Develop", read: "ดิ-เวล-ลอพ", th: "พัฒนา" },
+        { en: "Difference", read: "ดิฟ-เฟอ-เรนซ์", th: "ความแตกต่าง" },
+        { en: "Digital", read: "ดิจ-จิ-ทอล", th: "ดิจิทัล" },
+        { en: "Discover", read: "ดิส-คัฟ-เวอร์", th: "ค้นพบ" },
+        { en: "Distance", read: "ดิส-แทนซ์", th: "ระยะทาง" },
+        { en: "Diverse", read: "ได-เวิร์ส", th: "หลากหลาย" },
+        { en: "Dream", read: "ดรีม", th: "ความฝัน" },
+        { en: "Economy", read: "อิ-คอน-โน-มี่", th: "เศรษฐกิจ" },
+        { en: "Education", read: "เอ็ด-ดู-เค-ชั่น", th: "การศึกษา" },
+        { en: "Effective", read: "อิ-เฟค-ทิฟ", th: "มีประสิทธิผล" },
+        { en: "Emergency", read: "อิ-เมอร์-เจน-ซี่", th: "เหตุฉุกเฉิน" },
+        { en: "Emotion", read: "อิ-โม-ชัน", th: "อารมณ์" },
+        { en: "Energy", read: "เอน-เนอ-จี้", th: "พลังงาน" },
+        { en: "Environment", read: "เอน-ไว-รอน-เมนท์", th: "สิ่งแวดล้อม" },
+        { en: "Equal", read: "อี-เควล", th: "เท่าเทียม" },
+        { en: "Escape", read: "อิส-เคป", th: "หนีรอด" },
+        { en: "Essential", read: "อิ-เซน-เชียล", th: "จำเป็น" },
+        { en: "Event", read: "อิ-เวนท์", th: "เหตุการณ์" },
+        { en: "Evidence", read: "เอฟ-วิ-เดนซ์", th: "หลักฐาน" },
+        { en: "Excellent", read: "เอ็ก-เซล-เลนท์", th: "ยอดเยี่ยม" },
+        { en: "Exchange", read: "อิกซ์-เชนจ์", th: "แลกเปลี่ยน" },
+        { en: "Experience", read: "อิกซ์-เพียร์-เรียนซ์", th: "ประสบการณ์" },
+        { en: "Explain", read: "อิกซ์-เพลน", th: "อธิบาย" },
+        { en: "Explore", read: "อิกซ์-พลอร์", th: "สำรวจ" },
+        { en: "Express", read: "อิกซ์-เพรส", th: "แสดงออก" },
+        { en: "Failure", read: "เฟล-เยอร์", th: "ความล้มเหลว" },
+        { en: "Faith", read: "เฟธ", th: "ความเชื่อ" },
+        { en: "Famous", read: "เฟ-มัส", th: "มีชื่อเสียง" },
+        { en: "Feature", read: "ฟี-เชอร์", th: "คุณสมบัติ" },
+        { en: "Festival", read: "เฟส-ติ-วอล", th: "เทศกาล" },
+        { en: "Finance", read: "ไฟ-แนนซ์", th: "การเงิน" },
+        { en: "Focus", read: "โฟ-คัส", th: "จุดสนใจ" },
+        { en: "Force", read: "ฟอร์ส", th: "แรง/บังคับ" },
+        { en: "Forest", read: "ฟอ-เรสท์", th: "ป่า" },
+        { en: "Freedom", read: "ฟรี-ดอม", th: "อิสรภาพ" },
+        { en: "Friendship", read: "เฟรนด์-ชิพ", th: "มิตรภาพ" },
+        { en: "Future", read: "ฟิว-เชอร์", th: "อนาคต" },
+        { en: "Galaxy", read: "แกล-แลค-ซี่", th: "กาแล็กซี" },
+        { en: "Generate", read: "เจน-เนอ-เรท", th: "ผลิต/สร้าง" },
+        { en: "Gentle", read: "เจน-เทิล", th: "อ่อนโยน" },
+        { en: "Global", read: "โกล-บอล", th: "ทั่วโลก" },
+        { en: "Govern", read: "กัฟ-เวิร์น", th: "ปกครอง" },
+        { en: "Grateful", read: "เกรท-ฟูล", th: "ขอบคุณ" },
+        { en: "Growth", read: "โกรธ", th: "การเติบโต" },
+        { en: "Guidance", read: "ไกด์-เดนซ์", th: "การแนะนำ" },
+        { en: "Happiness", read: "แฮป-พิ-เนส", th: "ความสุข" },
+        { en: "Harmony", read: "ฮาร์-โม-นี่", th: "ความสมานฉันท์" },
+        { en: "Health", read: "เฮลธ์", th: "สุขภาพ" },
+        { en: "Heritage", read: "เฮร์-ริ-ทิจ", th: "มรดก" },
+        { en: "History", read: "ฮิส-โต-รี่", th: "ประวัติศาสตร์" },
+        { en: "Honor", read: "ออน-เนอร์", th: "เกียรติยศ" },
+        { en: "Hope", read: "โฮพ", th: "ความหวัง" },
+        { en: "Human", read: "ฮิว-แมน", th: "มนุษย์" },
+        { en: "Humor", read: "ฮิว-เมอร์", th: "อารมณ์ขัน" },
+        { en: "Identity", read: "ไอ-เดน-ติ-ตี้", th: "เอกลักษณ์" },
+        { en: "Imagine", read: "อิ-แมจ-จิน", th: "จินตนาการ" },
+        { en: "Immediate", read: "อิ-มี-เดียท", th: "ทันทีทันใด" },
+        { en: "Impact", read: "อิม-แพคท์", th: "ผลกระทบ" },
+        { en: "Improve", read: "อิม-พรูฟ", th: "ปรับปรุง" },
+        { en: "Include", read: "อิน-คลูด", th: "รวมถึง" },
+        { en: "Increase", read: "อิน-ครีส", th: "เพิ่มขึ้น" },
+        { en: "Influence", read: "อิน-ฟลู-เอนซ์", th: "อิทธิพล" },
+        { en: "Information", read: "อิน-ฟอ-เม-ชัน", th: "ข้อมูล" },
+        { en: "Inspire", read: "อิน-สไปร์", th: "สร้างแรงบันดาลใจ" },
+        { en: "Intelligence", read: "อิน-เทล-ลิ-เจนซ์", th: "ความฉลาด" },
+        { en: "Interest", read: "อิน-เทอ-เรสท์", th: "ความสนใจ" },
+        { en: "Issue", read: "อิช-ชู", th: "ประเด็น" },
+        { en: "Journey", read: "เจอร์-นี่", th: "การเดินทาง" },
+        { en: "Justice", read: "จัส-ทิซ", th: "ความยุติธรรม" },
+        { en: "Knowledge", read: "นอล-เลจ", th: "ความรู้" },
+        { en: "Language", read: "แลง-กวิจ", th: "ภาษา" },
+        { en: "Leader", read: "ลี-เดอร์", th: "ผู้นำ" },
+        { en: "Legacy", read: "เลก-กะ-ซี่", th: "มรดกตกทอด" },
+        { en: "Liberty", read: "ลิบ-เบอ-ตี้", th: "เสรีภาพ" },
+        { en: "Lifestyle", read: "ไลฟ์-สไตล์", th: "วิถีชีวิต" },
+        { en: "Loyalty", read: "ลอย-ยอล-ตี้", th: "ความภักดี" },
+        { en: "Manage", read: "แมน-เนจ", th: "จัดการ" },
+        { en: "Market", read: "มาร์-เคท", th: "ตลาด" },
+        { en: "Memory", read: "เมม-โม-รี่", th: "ความทรงจำ" },
+        { en: "Message", read: "เมส-เสจ", th: "ข้อความ" },
+        { en: "Method", read: "เมธ-เธิด", th: "วิธีการ" },
+        { en: "Mission", read: "มิช-ชัน", th: "ภารกิจ" },
+        { en: "Modern", read: "มอด-เดิร์น", th: "ทันสมัย" },
+        { en: "Moment", read: "โม-เมนท์", th: "ช่วงเวลา" },
+        { en: "Moral", read: "มอ-รัล", th: "คุณธรรม" },
+        { en: "Motivate", read: "โม-ติ-เวท", th: "จูงใจ" },
+        { en: "Mystery", read: "มิส-เตอ-รี่", th: "ความลึกลับ" },
+        { en: "Natural", read: "แนช-ชู-รอล", th: "ธรรมชาติ" },
+        { en: "Necessary", read: "เนส-เซส-เซ-รี่", th: "จำเป็น" },
+        { en: "Network", read: "เนท-เวิร์ค", th: "เครือข่าย" },
+        { en: "Normal", read: "นอร์-มอล", th: "ปกติ" },
+        { en: "Notice", read: "โน-ทิส", th: "สังเกต" },
+        { en: "Objective", read: "อ็อบ-เจค-ทิฟ", th: "วัตถุประสงค์" },
+        { en: "Opportunity", read: "อ็อพ-เพอ-ทิว-นิ-ตี้", th: "โอกาส" },
+        { en: "Organize", read: "อ็อร์-กะ-ไนซ์", th: "จัดระเบียบ" },
+        { en: "Origin", read: "อ็อ-ริ-จิน", th: "ต้นกำเนิด" },
+        { en: "Outcome", read: "เอาท์-คัม", th: "ผลลัพธ์" },
+        { en: "Overcome", read: "โอ-เวอร์-คัม", th: "เอาชนะ" },
+        { en: "Passion", read: "แพช-ชัน", th: "ความหลงใหล" },
+        { en: "Pattern", read: "แพท-เทิร์น", th: "รูปแบบ" },
+        { en: "Peace", read: "พีส", th: "สันติภาพ" },
+        { en: "Perform", read: "เพอร์-ฟอร์ม", th: "แสดง/ดำเนินการ" },
+        { en: "Perspective", read: "เพอร์-สเปค-ทิฟ", th: "มุมมอง" },
+        { en: "Plan", read: "แพลน", th: "แผน" },
+        { en: "Policy", read: "พอล-ลิ-ซี่", th: "นโยบาย" },
+        { en: "Popular", read: "พ็อพ-พิว-เลอร์", th: "เป็นที่นิยม" },
+        { en: "Positive", read: "พอส-ซิ-ทิฟ", th: "เชิงบวก" },
+        { en: "Potential", read: "โพ-เทน-เชียล", th: "ศักยภาพ" },
+        { en: "Practice", read: "แพรค-ทิส", th: "ฝึกฝน" },
+        { en: "Problem", read: "พร็อบ-เบลม", th: "ปัญหา" },
+        { en: "Process", read: "โพร-เซส", th: "กระบวนการ" },
+        { en: "Progress", read: "โพร-เกรส", th: "ความก้าวหน้า" },
+        { en: "Promise", read: "พรอม-มิส", th: "สัญญา" },
+        { en: "Protect", read: "โพร-เทคท์", th: "ปกป้อง" },
+        { en: "Prove", read: "พรูฟ", th: "พิสูจน์" },
+        { en: "Purpose", read: "เพอร์-เพิส", th: "จุดประสงค์" },
+        { en: "Quality", read: "ควอล-ลิ-ตี้", th: "คุณภาพ" },
+        { en: "Question", read: "เควส-ชัน", th: "คำถาม" },
+        { en: "Reason", read: "รี-เซิน", th: "เหตุผล" },
+        { en: "Recognize", read: "เรค-คอก-ไนซ์", th: "จดจำ/ยอมรับ" },
+        { en: "Recover", read: "รี-คัฟ-เวอร์", th: "ฟื้นตัว" },
+        { en: "Relationship", read: "รี-เล-ชัน-ชิพ", th: "ความสัมพันธ์" },
+        { en: "Reliable", read: "รี-ไล-อะ-เบิล", th: "เชื่อถือได้" },
+        { en: "Research", read: "รี-เสิร์ช", th: "วิจัย" },
+        { en: "Resource", read: "รี-ซอร์ส", th: "ทรัพยากร" },
+        { en: "Respond", read: "รี-สพอนด์", th: "ตอบสนอง" },
+        { en: "Responsible", read: "รี-สพอน-ซิ-เบิล", th: "รับผิดชอบ" },
+        { en: "Result", read: "รี-ซัลท์", th: "ผลลัพธ์" },
+        { en: "Revolution", read: "เรฟ-โว-ลู-ชัน", th: "การปฏิวัติ" },
+        { en: "Reward", read: "รี-วอร์ด", th: "รางวัล" },
+        { en: "Risk", read: "ริสค์", th: "ความเสี่ยง" },
+        { en: "Role", read: "โรล", th: "บทบาท" },
+        { en: "Routine", read: "รู-ทีน", th: "กิจวัตร" },
+        { en: "Sacrifice", read: "แซค-คริ-ไฟส์", th: "เสียสละ" },
+        { en: "Safety", read: "เซฟ-ตี้", th: "ความปลอดภัย" },
+        { en: "Science", read: "ไซ-เอนซ์", th: "วิทยาศาสตร์" },
+        { en: "Secret", read: "ซี-เครท", th: "ความลับ" },
+        { en: "Service", read: "เซอร์-วิส", th: "บริการ" },
+        { en: "Share", read: "แชร์", th: "แบ่งปัน" },
+        { en: "Skill", read: "สกิล", th: "ทักษะ" },
+        { en: "Society", read: "โซ-ไซ-อิ-ตี้", th: "สังคม" },
+        { en: "Solution", read: "โซ-ลู-ชัน", th: "วิธีแก้ปัญหา" },
+        { en: "Spirit", read: "สพิ-ริท", th: "จิตวิญญาณ" },
+        { en: "Strategy", read: "สแทรท-ทิ-จี่", th: "กลยุทธ์" },
+        { en: "Strength", read: "สเทรงธ์", th: "ความแข็งแกร่ง" },
+        { en: "Success", read: "ซัค-เซส", th: "ความสำเร็จ" },
+        { en: "Support", read: "ซัพ-พอร์ท", th: "สนับสนุน" },
+        { en: "Survive", read: "เซอร์-ไวฟ์", th: "รอดชีวิต" },
+        { en: "Symbol", read: "ซิม-โบล", th: "สัญลักษณ์" },
+        { en: "System", read: "ซิส-เทม", th: "ระบบ" },
+        { en: "Target", read: "ทาร์-เกท", th: "เป้าหมาย" },
+        { en: "Technology", read: "เทค-นอล-โล-จี่", th: "เทคโนโลยี" },
+        { en: "Theory", read: "เธีย-รี่", th: "ทฤษฎี" },
+        { en: "Tradition", read: "ทระ-ดิ-ชัน", th: "ประเพณี" },
+        { en: "Transform", read: "ทรานส์-ฟอร์ม", th: "เปลี่ยนแปลง" },
+        { en: "Trust", read: "ทรัสท์", th: "ความไว้วางใจ" },
+        { en: "Truth", read: "ทรูธ", th: "ความจริง" },
+        { en: "Unity", read: "ยู-นิ-ตี้", th: "ความสามัคคี" },
+        { en: "Universe", read: "ยู-นิ-เวิร์ส", th: "จักรวาล" },
+        { en: "Value", read: "แวล-ลิว", th: "คุณค่า" },
+        { en: "Victory", read: "วิค-โต-รี่", th: "ชัยชนะ" },
+        { en: "Vision", read: "วิ-ชัน", th: "วิสัยทัศน์" },
+        { en: "Wisdom", read: "วิส-ดอม", th: "ปัญญา" },
+        { en: "Wonderful", read: "วันเดอร์-ฟูล", th: "มหัศจรรย์" },
+        { en: "Achievement", read: "อะ-ชีฟ-เมนท์", th: "ความสำเร็จ" },
+        { en: "Acknowledge", read: "แอค-นอล-เลจ", th: "ยอมรับ" },
+        { en: "Advantage", read: "แอด-วาน-ทิจ", th: "ข้อได้เปรียบ" },
+        { en: "Analyze", read: "แอน-นะ-ไลซ์", th: "วิเคราะห์" },
+        { en: "Announce", read: "อะ-นาวนซ์", th: "ประกาศ" },
+        { en: "Apply", read: "อะ-พลาย", th: "สมัคร/ใช้งาน" },
+        { en: "Appreciate", read: "อะ-พรี-ชิ-เอท", th: "ขอบคุณ/ชื่นชม" },
+        { en: "Assume", read: "อะ-ซูม", th: "สันนิษฐาน" },
+        { en: "Collaboration", read: "คะ-แลบ-โบ-เร-ชัน", th: "การร่วมมือ" },
+        { en: "Commitment", read: "คะ-มิท-เมนท์", th: "ความมุ่งมั่น" },
+        { en: "Communication", read: "คะ-มิว-นิ-เค-ชัน", th: "การสื่อสาร" },
+        { en: "Competition", read: "คอม-พิ-ทิ-ชัน", th: "การแข่งขัน" },
+        { en: "Conclusion", read: "คอน-คลู-ชัน", th: "บทสรุป" },
+        { en: "Confidence", read: "คอน-ฟิ-เดนซ์", th: "ความมั่นใจ" },
+        {
+          en: "Creativity",
+          read: "ครี-เอ-ทิฟ-วิ-ตี้",
+          th: "ความคิดสร้างสรรค์",
+        },
+        { en: "Curiosity", read: "คิว-รี-ออส-ซิ-ตี้", th: "ความอยากรู้" },
+        { en: "Dedication", read: "เดด-ดิ-เค-ชัน", th: "ความทุ่มเท" },
+        { en: "Determination", read: "ดิ-เทอร์-มิ-เน-ชัน", th: "ความตั้งใจ" },
+        { en: "Discipline", read: "ดิส-ซิ-พลิน", th: "ระเบียบวินัย" },
+        { en: "Diversity", read: "ได-เวอร์-ซิ-ตี้", th: "ความหลากหลาย" },
+        { en: "Efficiency", read: "อิ-ฟิ-เชน-ซี่", th: "ประสิทธิภาพ" },
+        {
+          en: "Enthusiasm",
+          read: "อิน-ธิว-ซิ-แอส-ซึม",
+          th: "ความกระตือรือร้น",
+        },
+        { en: "Evaluation", read: "อิ-แวล-ลิว-เอ-ชัน", th: "การประเมิน" },
+        { en: "Excellence", read: "เอ็กซ์-เซล-เลนซ์", th: "ความเป็นเลิศ" },
+        {
+          en: "Flexibility",
+          read: "เฟล็กซ์-ซิ-บิล-ลิ-ตี้",
+          th: "ความยืดหยุ่น",
+        },
+        { en: "Generosity", read: "เจน-เนอ-รอส-ซิ-ตี้", th: "ความเอื้อเฟื้อ" },
+        { en: "Government", read: "กัฟ-เวิร์น-เมนท์", th: "รัฐบาล" },
+        { en: "Imagination", read: "อิ-แมจ-จิ-เน-ชัน", th: "จินตนาการ" },
+        { en: "Independence", read: "อิน-ดิ-เพน-เดนซ์", th: "อิสรภาพ" },
+        { en: "Integrity", read: "อิน-เทก-กริ-ตี้", th: "ความซื่อสัตย์" },
+        { en: "Investment", read: "อิน-เวสท์-เมนท์", th: "การลงทุน" },
+        { en: "Leadership", read: "ลี-เดอร์-ชิพ", th: "ภาวะผู้นำ" },
+        { en: "Motivation", read: "โม-ติ-เว-ชัน", th: "แรงจูงใจ" },
+        { en: "Negotiation", read: "นิ-โก-ชิ-เอ-ชัน", th: "การเจรจา" },
+        { en: "Organization", read: "อ็อร์-กะ-นิ-เซ-ชัน", th: "องค์กร" },
+        {
+          en: "Participation",
+          read: "พาร์-ทิส-ซิ-เพ-ชัน",
+          th: "การมีส่วนร่วม",
+        },
+        { en: "Perseverance", read: "เพอร์-ซิ-เวียร์-เรนซ์", th: "ความอดทน" },
+        { en: "Personality", read: "เพอร์-โซ-แนล-ลิ-ตี้", th: "บุคลิกภาพ" },
+        { en: "Preparation", read: "เพรพ-พะ-เร-ชัน", th: "การเตรียมตัว" },
+        { en: "Productivity", read: "โพร-ดัค-ทิฟ-วิ-ตี้", th: "ผลผลิต" },
+        { en: "Recognition", read: "เรค-คอก-นิ-ชัน", th: "การยอมรับ" },
+        {
+          en: "Responsibility",
+          read: "รี-สพอน-ซิ-บิล-ลิ-ตี้",
+          th: "ความรับผิดชอบ",
+        },
+        { en: "Satisfaction", read: "แซท-ทิส-แฟค-ชัน", th: "ความพึงพอใจ" },
+        {
+          en: "Sustainability",
+          read: "ซัส-เทน-นะ-บิล-ลิ-ตี้",
+          th: "ความยั่งยืน",
+        },
+        {
+          en: "Transformation",
+          read: "ทรานส์-ฟอร์-เม-ชัน",
+          th: "การเปลี่ยนแปลง",
+        },
+        { en: "Understanding", read: "อัน-เดอร์-สแตน-ดิง", th: "ความเข้าใจ" },
+        {
+          en: "Accountability",
+          read: "อะ-เคาน์-ตะ-บิล-ลิ-ตี้",
+          th: "ความรับผิดชอบ",
+        },
+        { en: "Consciousness", read: "คอน-เชส-เนส", th: "จิตสำนึก" },
+        { en: "Demonstration", read: "เดม-มอน-สเทร-ชัน", th: "การสาธิต" },
+        { en: "Encouragement", read: "เอน-คัร์-เรจ-เมนท์", th: "กำลังใจ" },
+        { en: "Entertainment", read: "เอน-เทอ-เทน-เมนท์", th: "ความบันเทิง" },
+        { en: "Extraordinary", read: "เอ็กซ์-ทรา-ออร์-ดิ-เน-รี่", th: "พิเศษ" },
+        { en: "Fundamental", read: "ฟัน-ดะ-เมน-ทอล", th: "พื้นฐาน" },
+        {
+          en: "Implementation",
+          read: "อิม-พลิ-เมน-เท-ชัน",
+          th: "การนำไปปฏิบัติ",
+        },
+        {
+          en: "Infrastructure",
+          read: "อิน-ฟระ-สทรัค-เชอร์",
+          th: "โครงสร้างพื้นฐาน",
+        },
+        { en: "Interpretation", read: "อิน-เทอร์-พริ-เท-ชัน", th: "การตีความ" },
+        { en: "Investigation", read: "อิน-เวส-ติ-เก-ชัน", th: "การสืบสวน" },
+        {
+          en: "Misunderstanding",
+          read: "มิส-อัน-เดอร์-สแตน-ดิง",
+          th: "การเข้าใจผิด",
+        },
+        { en: "Phenomenon", read: "ฟิ-นอม-มิ-นอน", th: "ปรากฏการณ์" },
+        { en: "Prioritize", read: "ไพร-อ็อ-ริ-ไทซ์", th: "จัดลำดับความสำคัญ" },
+        {
+          en: "Professionalism",
+          read: "โพร-เฟช-ชัน-นะ-ลิส-ซึม",
+          th: "ความเป็นมืออาชีพ",
+        },
+        { en: "Transparent", read: "ทรานส์-แพร์-เรนท์", th: "โปร่งใส" },
+        { en: "Accumulate", read: "อะ-คิว-มิว-เลท", th: "สะสม" },
+        { en: "Accurate", read: "แอค-คิว-เรท", th: "แม่นยำ" },
+        { en: "Admire", read: "แอด-ไมร์", th: "ชื่นชม" },
+        { en: "Advocate", read: "แอด-โว-เคท", th: "สนับสนุน" },
+        { en: "Allocate", read: "แอล-โล-เคท", th: "จัดสรร" },
+        { en: "Ambitious", read: "แอม-บิช-ชัส", th: "ทะเยอทะยาน" },
+        { en: "Anticipate", read: "แอน-ทิส-ซิ-เพท", th: "คาดการณ์" },
+        { en: "Apologize", read: "อะ-พอล-โล-ไจส์", th: "ขอโทษ" },
+        { en: "Aspire", read: "แอส-ไพร์", th: "ปรารถนา" },
+        { en: "Assemble", read: "อะ-เซม-เบิล", th: "ประกอบ" },
+        { en: "Assess", read: "อะ-เซส", th: "ประเมิน" },
+        { en: "Assist", read: "อะ-ซิสท์", th: "ช่วยเหลือ" },
+        { en: "Authentic", read: "อ็อ-เธน-ทิค", th: "แท้จริง" },
+        { en: "Autonomy", read: "อ็อ-ทอน-โน-มี่", th: "อิสระ" },
+        { en: "Bargain", read: "บาร์-เกน", th: "ต่อรอง" },
+        { en: "Beneficial", read: "เบน-นิ-ฟิช-เชียล", th: "เป็นประโยชน์" },
+        { en: "Bias", read: "ไบ-อัส", th: "อคติ" },
+        { en: "Blueprint", read: "บลู-พรินท์", th: "พิมพ์เขียว" },
+        { en: "Boundary", read: "เบา-ดา-รี่", th: "ขอบเขต" },
+        { en: "Capability", read: "เค-พะ-บิล-ลิ-ตี้", th: "ความสามารถ" },
+        { en: "Capture", read: "แคพ-เชอร์", th: "จับได้" },
+        { en: "Clarify", read: "แคลร์-ริ-ไฟ", th: "ชี้แจง" },
+        { en: "Collaborate", read: "คะ-แลบ-โบ-เรท", th: "ร่วมมือ" },
+        { en: "Competent", read: "คอม-พิ-เทนท์", th: "มีความสามารถ" },
+        { en: "Concept", read: "คอน-เซ็พท์", th: "แนวคิด" },
+        { en: "Consistent", read: "คอน-ซิส-เทนท์", th: "สม่ำเสมอ" },
+        { en: "Context", read: "คอน-เท็กซ์ท์", th: "บริบท" },
+        { en: "Contribute", read: "คอน-ทริ-บิวท์", th: "มีส่วนร่วม" },
+        { en: "Credible", read: "เครด-ดิ-เบิล", th: "น่าเชื่อถือ" },
+        { en: "Critical", read: "คริท-ติ-คอล", th: "สำคัญยิ่ง" },
+        { en: "Curious", read: "คิว-รี-อัส", th: "อยากรู้อยากเห็น" },
+        { en: "Decisive", read: "ดิ-ไซ-ซิฟ", th: "เด็ดขาด" },
+        { en: "Delegate", read: "เดล-ลิ-เกท", th: "มอบหมาย" },
+        { en: "Demonstrate", read: "เดม-มอน-สเทรท", th: "สาธิต" },
+        { en: "Dialogue", read: "ได-อะ-ล็อก", th: "บทสนทนา" },
+        { en: "Diligent", read: "ดิล-ลิ-เจนท์", th: "ขยันหมั่นเพียร" },
+        { en: "Dynamic", read: "ได-แนม-มิค", th: "พลวัต" },
+        { en: "Elevate", read: "เอล-ลิ-เวท", th: "ยกระดับ" },
+        { en: "Emerge", read: "อิ-เมิร์จ", th: "ปรากฏขึ้น" },
+        { en: "Empower", read: "เอม-เพา-เวอร์", th: "เสริมพลัง" },
+        { en: "Encourage", read: "เอน-คัร์-เรจ", th: "ให้กำลังใจ" },
+        { en: "Endure", read: "เอน-ดิวร์", th: "อดทน" },
+        { en: "Establish", read: "อิส-แทบ-ลิช", th: "ก่อตั้ง" },
+        { en: "Evolve", read: "อิ-วอลฟ์", th: "วิวัฒนาการ" },
+        { en: "Excel", read: "อิก-เซล", th: "โดดเด่น" },
+        { en: "Execute", read: "เอ็ก-ซิ-คิวท์", th: "ดำเนินการ" },
+        { en: "Expand", read: "อิกซ์-แพนด์", th: "ขยาย" },
+        { en: "Facilitate", read: "ฟะ-ซิล-ลิ-เทท", th: "อำนวยความสะดวก" },
+        { en: "Feedback", read: "ฟีด-แบค", th: "ข้อเสนอแนะ" },
+        { en: "Flexible", read: "เฟล็กซ์-ซิ-เบิล", th: "ยืดหยุ่น" },
+        { en: "Flourish", read: "เฟลอ-ริช", th: "รุ่งเรือง" },
+        { en: "Formulate", read: "ฟอร์-มิว-เลท", th: "กำหนด" },
+        { en: "Genuine", read: "เจน-นิว-อิน", th: "แท้จริง" },
+        { en: "Goal", read: "โกล", th: "เป้าหมาย" },
+        { en: "Highlight", read: "ไฮ-ไลท์", th: "เน้น" },
+        { en: "Honest", read: "ออน-เนสท์", th: "ซื่อสัตย์" },
+        { en: "Humble", read: "ฮัม-เบิล", th: "ถ่อมตน" },
+        { en: "Ideal", read: "ไอ-เดียล", th: "อุดมคติ" },
+        { en: "Implement", read: "อิม-พลิ-เมนท์", th: "นำไปปฏิบัติ" },
+        { en: "Indicate", read: "อิน-ดิ-เคท", th: "ระบุ" },
+        { en: "Innovative", read: "อิน-โน-เว-ทิฟ", th: "สร้างนวัตกรรม" },
+        { en: "Insight", read: "อิน-ไซท์", th: "ความเข้าใจลึกซึ้ง" },
+        { en: "Integrate", read: "อิน-ทิ-เกรท", th: "รวมเป็นหนึ่ง" },
+        { en: "Investigate", read: "อิน-เวส-ติ-เกท", th: "สืบสวน" },
+        { en: "Kind", read: "ไคน์ด", th: "ใจดี" },
+        { en: "Launch", read: "ลอนช์", th: "เปิดตัว" },
+        { en: "Learn", read: "เลิร์น", th: "เรียนรู้" },
+        { en: "Leverage", read: "เลฟ-เวอ-เรจ", th: "ใช้ประโยชน์" },
+        { en: "Mindset", read: "ไมน์ด-เซท", th: "กรอบความคิด" },
+        { en: "Monitor", read: "มอน-นิ-เทอร์", th: "ติดตาม" },
+        { en: "Nurture", read: "เนอร์-เชอร์", th: "บ่มเพาะ" },
+        { en: "Optimize", read: "อ็อพ-ติ-ไมซ์", th: "เพิ่มประสิทธิภาพ" },
+        { en: "Partner", read: "พาร์ท-เนอร์", th: "หุ้นส่วน" },
+        { en: "Patience", read: "เพ-เชนซ์", th: "ความอดทน" },
+        { en: "Persevere", read: "เพอร์-ซิ-เวียร์", th: "อดทน" },
+        { en: "Precise", read: "พรี-ไซส์", th: "แม่นยำ" },
+        { en: "Prevent", read: "พรี-เวนท์", th: "ป้องกัน" },
+        { en: "Pride", read: "ไพรด์", th: "ความภาคภูมิใจ" },
+        { en: "Proactive", read: "โพร-แอค-ทิฟ", th: "เชิงรุก" },
+        { en: "Promote", read: "โพร-โมท", th: "ส่งเสริม" },
+        { en: "Provide", read: "โพร-ไวด์", th: "จัดให้" },
+        { en: "Pursue", read: "เพอร์-ซิว", th: "ไล่ตาม" },
+        { en: "Realistic", read: "รี-อะ-ลิส-ทิค", th: "สมจริง" },
+        { en: "Reflect", read: "รี-เฟล็กท์", th: "สะท้อน" },
+        { en: "Reinforce", read: "รี-อิน-ฟอร์ส", th: "เสริมกำลัง" },
+        { en: "Relevant", read: "เรล-ลิ-วอนท์", th: "เกี่ยวข้อง" },
+        { en: "Resilient", read: "รี-ซิล-เลียนท์", th: "ยืดหยุ่น" },
+        { en: "Resolve", read: "รี-ซอลฟ์", th: "แก้ปัญหา" },
+        { en: "Respect", read: "รี-สเปคท์", th: "เคารพ" },
+        { en: "Restore", read: "รี-สทอร์", th: "ฟื้นฟู" },
+        { en: "Reveal", read: "รี-วีล", th: "เปิดเผย" },
+        { en: "Robust", read: "โร-บัสท์", th: "แข็งแกร่ง" },
+        { en: "Secure", read: "ซิ-คิวร์", th: "ปลอดภัย" },
+        { en: "Seek", read: "ซีค", th: "ค้นหา" },
+        { en: "Select", read: "ซิ-เลคท์", th: "เลือก" },
+        { en: "Sensitive", read: "เซน-ซิ-ทิฟ", th: "ไวต่อความรู้สึก" },
+        { en: "Solve", read: "ซอลฟ์", th: "แก้ไข" },
+        { en: "Specific", read: "สพิ-ซิฟ-ฟิค", th: "เฉพาะเจาะจง" },
+        { en: "Stable", read: "สเทบ-เบิล", th: "มั่นคง" },
+        { en: "Strive", read: "สไทรฟ์", th: "มุ่งมั่น" },
+        { en: "Succeed", read: "ซัค-ซีด", th: "ประสบความสำเร็จ" },
+        { en: "Suggest", read: "ซัก-เจสท์", th: "แนะนำ" },
+        { en: "Suitable", read: "ซิว-ทะ-เบิล", th: "เหมาะสม" },
+        { en: "Synergy", read: "ซิน-เนอ-จี่", th: "การทำงานร่วมกัน" },
+        { en: "Talent", read: "แทล-เลนท์", th: "พรสวรรค์" },
+        { en: "Teamwork", read: "ทีม-เวิร์ค", th: "การทำงานเป็นทีม" },
+        { en: "Tolerance", read: "ทอล-เลอ-เรนซ์", th: "ความอดทน" },
+        { en: "Treasure", read: "เทรส-เซอร์", th: "สมบัติ" },
+        { en: "Trigger", read: "ทริก-เกอร์", th: "กระตุ้น" },
+        { en: "Triumph", read: "ไทร-อัมฟ์", th: "ชัยชนะ" },
+        { en: "Ultimate", read: "อัล-ติ-เมท", th: "สูงสุด" },
+        { en: "Unify", read: "ยู-นิ-ไฟ", th: "รวมกัน" },
+        { en: "Unique", read: "ยู-นีค", th: "เป็นเอกลักษณ์" },
+        { en: "Utilize", read: "ยู-ติ-ไลซ์", th: "ใช้ประโยชน์" },
+        { en: "Validate", read: "แวล-ลิ-เดท", th: "ตรวจสอบความถูกต้อง" },
+        { en: "Valuable", read: "แวล-ลิว-อะ-เบิล", th: "มีคุณค่า" },
+        { en: "Variety", read: "วะ-ไร-เอ-ตี้", th: "ความหลากหลาย" },
+        { en: "Vibrant", read: "ไวบ-แรนท์", th: "มีชีวิตชีวา" },
+        { en: "Vital", read: "ไว-ทอล", th: "สำคัญยิ่ง" },
+        { en: "Welcome", read: "เวล-คัม", th: "ยินดีต้อนรับ" },
+        { en: "Willing", read: "วิล-ลิ่ง", th: "เต็มใจ" },
+        { en: "Worthy", read: "เวิร์-ธี่", th: "คู่ควร" },
+        { en: "Abundance", read: "อะ-บัน-เดนซ์", th: "ความอุดมสมบูรณ์" },
+        { en: "Agility", read: "อะ-จิล-ลิ-ตี้", th: "ความคล่องตัว" },
+        { en: "Alert", read: "อะ-เลิร์ท", th: "ตื่นตัว" },
+        { en: "Align", read: "อะ-ไลน์", th: "จัดแนว" },
+        { en: "Alliance", read: "อะ-ไล-อันซ์", th: "พันธมิตร" },
+        { en: "Altruism", read: "แอล-ทรู-อิส-ซึม", th: "ความเสียสละ" },
+        { en: "Aptitude", read: "แอพ-ติ-ทูด", th: "ความถนัด" },
+        { en: "Articulate", read: "อาร์-ทิค-กิว-เลท", th: "พูดชัดเจน" },
+        { en: "Astute", read: "อะ-สทิวท์", th: "ฉลาดแหลมคม" },
+        { en: "Attain", read: "อะ-เทน", th: "บรรลุ" },
+        { en: "Benchmark", read: "เบนช์-มาร์ค", th: "มาตรฐานเปรียบเทียบ" },
+        { en: "Candid", read: "แคน-ดิด", th: "พูดตรงไปตรงมา" },
+        { en: "Capacity", read: "คะ-แพส-ซิ-ตี้", th: "ความจุ" },
+        { en: "Catalyst", read: "แคท-ทา-ลิสท์", th: "ตัวเร่ง" },
+        { en: "Champion", read: "แชม-พิ-อัน", th: "ผู้ชนะ" },
+        { en: "Coherent", read: "โค-เฮียร์-เรนท์", th: "สอดคล้องกัน" },
+        { en: "Compelling", read: "คอม-เพล-ลิ่ง", th: "น่าสนใจ" },
+        { en: "Concise", read: "คอน-ไซส์", th: "กระชับ" },
+        { en: "Conquer", read: "คอง-เคอร์", th: "พิชิต" },
+        { en: "Constructive", read: "คอน-สทรัค-ทิฟ", th: "สร้างสรรค์" },
+        { en: "Contentment", read: "คอน-เทนท์-เมนท์", th: "ความพอใจ" },
+        { en: "Conviction", read: "คอน-วิค-ชัน", th: "ความเชื่อมั่น" },
+        { en: "Cultivate", read: "คัล-ติ-เวท", th: "เพาะปลูก" },
+        { en: "Delight", read: "ดิ-ไลท์", th: "ความยินดี" },
+        { en: "Devoted", read: "ดิ-โวท-ทิด", th: "อุทิศตน" },
+        { en: "Dignity", read: "ดิก-นิ-ตี้", th: "ศักดิ์ศรี" },
+        { en: "Diligence", read: "ดิล-ลิ-เจนซ์", th: "ความขยันหมั่นเพียร" },
+        { en: "Drive", read: "ไดรฟ์", th: "แรงขับเคลื่อน" },
+        { en: "Durable", read: "ดิว-ระ-เบิล", th: "ทนทาน" },
+        { en: "Eager", read: "อี-เกอร์", th: "กระตือรือร้น" },
+        { en: "Efficient", read: "อิ-ฟิช-เชนท์", th: "มีประสิทธิภาพ" },
+        { en: "Elegant", read: "เอล-ลิ-เกนท์", th: "สง่างาม" },
+        { en: "Embrace", read: "เอม-เบรส", th: "โอบรับ" },
+        { en: "Empathy", read: "เอม-พะ-ธี่", th: "ความเห็นอกเห็นใจ" },
+        { en: "Ethical", read: "เอธ-ธิ-คอล", th: "มีจริยธรรม" },
+        { en: "Exceptional", read: "อิก-เซพ-ชัน-นอล", th: "ยอดเยี่ยม" },
+        { en: "Expertise", read: "เอกซ์-เพอร์-ทีส", th: "ความเชี่ยวชาญ" },
+        { en: "Feasible", read: "ฟี-ซะ-เบิล", th: "ทำได้" },
+        { en: "Fidelity", read: "ฟิ-เดล-ลิ-ตี้", th: "ความซื่อสัตย์" },
+        { en: "Fierce", read: "เฟียร์ส", th: "ดุเดือด" },
+        { en: "Focused", read: "โฟ-คัสด์", th: "มุ่งเน้น" },
+        { en: "Foster", read: "ฟอส-เทอร์", th: "ส่งเสริม" },
+        { en: "Gallant", read: "แกล-เลนท์", th: "กล้าหาญ" },
+        { en: "Gracious", read: "เกร-เชส", th: "มีน้ำใจ" },
+        { en: "Grant", read: "แกรนท์", th: "มอบ" },
+        { en: "Hardworking", read: "ฮาร์ด-เวิร์ค-กิ้ง", th: "ขยันทำงาน" },
+        { en: "Helpful", read: "เฮลพ์-ฟูล", th: "เป็นประโยชน์" },
+        { en: "Heroic", read: "ฮิ-โรอิค", th: "กล้าหาญ" },
+        { en: "Holistic", read: "โฮ-ลิส-ทิค", th: "แบบองค์รวม" },
+        { en: "Iconic", read: "ไอ-คอน-นิค", th: "เป็นที่จดจำ" },
+        { en: "Illuminate", read: "อิ-ลิว-มิ-เนท", th: "ทำให้กระจ่าง" },
+        { en: "Immerse", read: "อิ-เมิร์ส", th: "ดื่มด่ำ" },
+        { en: "Impressive", read: "อิม-เพรส-ซิฟ", th: "น่าประทับใจ" },
+        { en: "Incentive", read: "อิน-เซน-ทิฟ", th: "สิ่งจูงใจ" },
+        { en: "Inclusive", read: "อิน-คลู-ซิฟ", th: "ครอบคลุม" },
+        { en: "Industrious", read: "อิน-ดัส-ทรี-อัส", th: "ขยันขันแข็ง" },
+        { en: "Ingenious", read: "อิน-จี-นี-อัส", th: "ฉลาดคิด" },
+        { en: "Insightful", read: "อิน-ไซท์-ฟูล", th: "เฉียบแหลม" },
+        { en: "Instinct", read: "อิน-สทิงคท์", th: "สัญชาตญาณ" },
+        { en: "Inventive", read: "อิน-เวน-ทิฟ", th: "ชอบประดิษฐ์" },
+        { en: "Joyful", read: "จอย-ฟูล", th: "ร่าเริง" },
+        { en: "Keen", read: "คีน", th: "กระตือรือร้น" },
+        { en: "Knowledgeable", read: "นอล-ลิจ-อะ-เบิล", th: "มีความรู้" },
+        { en: "Laudable", read: "ลอ-ดะ-เบิล", th: "น่ายกย่อง" },
+        { en: "Legitimate", read: "ลิ-จิท-ทิ-เมท", th: "ถูกต้องตามกฎหมาย" },
+        { en: "Lively", read: "ไลฟ์-ลี่", th: "มีชีวิตชีวา" },
+        { en: "Mastery", read: "มาส-เทอ-รี่", th: "ความเชี่ยวชาญ" },
+        { en: "Mature", read: "มะ-ทิวร์", th: "สุกงอม" },
+        { en: "Meticulous", read: "มิ-ทิค-กิว-ลัส", th: "ละเอียดรอบคอบ" },
+        { en: "Noble", read: "โน-เบิล", th: "สูงส่ง" },
+        { en: "Open-minded", read: "โอ-เพน-ไมน์ดิด", th: "เปิดใจ" },
+        { en: "Optimal", read: "อ็อพ-ติ-มอล", th: "เหมาะที่สุด" },
+        { en: "Passionate", read: "แพช-ชัน-เนท", th: "มีความหลงใหล" },
+        { en: "Persistent", read: "เพอร์-ซิส-เทนท์", th: "ยืนหยัด" },
+        { en: "Pioneering", read: "ไพ-โอ-เนียร์-ริ่ง", th: "บุกเบิก" },
+        { en: "Powerful", read: "เพา-เวอร์-ฟูล", th: "ทรงพลัง" },
+        { en: "Pragmatic", read: "แพรก-แมท-ทิค", th: "ปฏิบัตินิยม" },
+        { en: "Prestigious", read: "เพรส-ทิจ-เจส", th: "มีชื่อเสียง" },
+        { en: "Principled", read: "พริน-ซิ-เพิลด์", th: "มีหลักการ" },
+        { en: "Progressive", read: "โพร-เกรส-ซิฟ", th: "ก้าวหน้า" },
+        { en: "Prominent", read: "พรอม-มิ-เนนท์", th: "โดดเด่น" },
+        { en: "Prosperous", read: "พรอส-เพอ-รัส", th: "เจริญรุ่งเรือง" },
+        { en: "Purposeful", read: "เพอร์-เพิส-ฟูล", th: "มีจุดมุ่งหมาย" },
+        { en: "Rational", read: "แรช-ชัน-นอล", th: "มีเหตุผล" },
+        { en: "Receptive", read: "รี-เซพ-ทิฟ", th: "รับฟัง" },
+        { en: "Refined", read: "รี-ไฟน์ด", th: "ขัดเกลา" },
+        { en: "Remarkable", read: "รี-มาร์ค-กะ-เบิล", th: "น่าทึ่ง" },
+        { en: "Resourceful", read: "รี-ซอร์ส-ฟูล", th: "มีไหวพริบ" },
+        { en: "Righteous", read: "ไรท์-เชส", th: "ชอบธรรม" },
+        { en: "Rigorous", read: "ริก-กอ-รัส", th: "เข้มงวด" },
+        { en: "Savvy", read: "แซฟ-วี่", th: "ฉลาด" },
+        { en: "Selfless", read: "เซลฟ์-เลส", th: "ไม่เห็นแก่ตัว" },
+        { en: "Sensible", read: "เซน-ซิ-เบิล", th: "มีเหตุผล" },
+        { en: "Sincere", read: "ซิน-เซียร์", th: "จริงใจ" },
+        { en: "Skilled", read: "สกิลด์", th: "มีทักษะ" },
+        { en: "Smart", read: "สมาร์ท", th: "ฉลาด" },
+        { en: "Steadfast", read: "สเทด-ฟาสท์", th: "มั่นคง" },
+        { en: "Strategic", read: "สทระ-ที-จิค", th: "เชิงกลยุทธ์" },
+        { en: "Superior", read: "ซิว-เพียร์-เรียร์", th: "เหนือกว่า" },
+        { en: "Supportive", read: "ซัพ-พอร์-ทิฟ", th: "สนับสนุน" },
+        { en: "Swift", read: "สวิฟท์", th: "รวดเร็ว" },
+        { en: "Thoughtful", read: "ธอต-ฟูล", th: "ใส่ใจ" },
+        { en: "Tireless", read: "ไทร์-เลส", th: "ไม่รู้จักเหนื่อย" },
+        { en: "Tolerant", read: "ทอล-เลอ-เรนท์", th: "ใจกว้าง" },
+        { en: "Trustworthy", read: "ทรัสท์-เวิร์-ธี่", th: "ไว้วางใจได้" },
+        { en: "Unified", read: "ยู-นิ-ไฟด์", th: "เป็นหนึ่งเดียว" },
+        { en: "Uplifting", read: "อัพ-ลิฟท์-ติ้ง", th: "ยกระดับจิตใจ" },
+        { en: "Vigorous", read: "วิก-กอ-รัส", th: "แข็งแรง" },
+        { en: "Virtuous", read: "เวอร์-ชิว-อัส", th: "มีคุณธรรม" },
+        { en: "Visionary", read: "วิ-ชัน-นา-รี่", th: "มีวิสัยทัศน์" },
+        { en: "Wholehearted", read: "โฮล-ฮาร์ท-ทิด", th: "เต็มใจ" },
+        { en: "Wise", read: "วายส์", th: "ฉลาด" },
+        { en: "Zealous", read: "เซล-ลัส", th: "กระตือรือร้นมาก" },
+        { en: "Zeal", read: "ซีล", th: "ความกระตือรือร้น" },
+        { en: "Zenith", read: "ซี-นิธ", th: "จุดสูงสุด" },
+        { en: "Graceful", read: "เกรส-ฟูล", th: "สง่างาม" },
+        { en: "Admirable", read: "แอด-มิ-ระ-เบิล", th: "น่าชื่นชม" },
+        { en: "Assertive", read: "อะ-เซอร์-ทิฟ", th: "มั่นใจ" },
+        { en: "Candor", read: "แคน-ดอร์", th: "ความตรงไปตรงมา" },
+        { en: "Daring", read: "แดร์-ริ่ง", th: "กล้า" },
+        { en: "Earnestness", read: "เอิร์น-เนสท์-เนส", th: "ความจริงจัง" },
+        { en: "Fortitude", read: "ฟอร์-ติ-ทูด", th: "ความอดทน" },
+        { en: "Graciousness", read: "เกร-เชส-เนส", th: "ความมีน้ำใจ" },
+        { en: "Heartfelt", read: "ฮาร์ท-เฟลท์", th: "จากใจ" },
+        { en: "Ingenuity", read: "อิน-จิ-นิว-อิ-ตี้", th: "ความคิดสร้างสรรค์" },
+        { en: "Intuition", read: "อิน-ทิว-อิ-ชัน", th: "สัญชาตญาณ" },
+        { en: "Magnanimous", read: "แมก-แนน-นิ-มัส", th: "ใจกว้าง" },
+        { en: "Mettle", read: "เมท-เทิล", th: "ความกล้า" },
+        { en: "Mindfulness", read: "ไมน์ด-ฟูล-เนส", th: "สติ" },
+        { en: "Nimble", read: "นิม-เบิล", th: "คล่องตัว" },
+        { en: "Openness", read: "โอ-เพน-เนส", th: "ความเปิดกว้าง" },
+        { en: "Optimism", read: "อ็อพ-ติ-มิส-ซึม", th: "มองโลกในแง่ดี" },
+        { en: "Outspoken", read: "เอาท์-สโพ-เคน", th: "พูดตรงไปตรงมา" },
+        { en: "Persistence", read: "เพอร์-ซิส-เทนซ์", th: "ความพากเพียร" },
+        { en: "Philanthropy", read: "ฟิ-แลน-ธระ-พี่", th: "การกุศล" },
+        { en: "Positivity", read: "พอส-ซิ-ทิฟ-วิ-ตี้", th: "ความคิดบวก" },
+        { en: "Prudence", read: "พรู-เดนซ์", th: "ความรอบคอบ" },
+        { en: "Rectitude", read: "เรค-ติ-ทูด", th: "ความชอบธรรม" },
+        { en: "Refinement", read: "รี-ไฟน์-เมนท์", th: "การขัดเกลา" },
+        { en: "Renewal", read: "รี-นิว-อัล", th: "การต่ออายุ" },
+        { en: "Resolution", read: "เรส-โซ-ลิว-ชัน", th: "การแก้ปัญหา" },
+        { en: "Restraint", read: "รี-สเทรนท์", th: "การยับยั้ง" },
+        { en: "Sagacity", read: "ซะ-แกส-ซิ-ตี้", th: "ความฉลาด" },
+        { en: "Serenity", read: "ซะ-เรน-นิ-ตี้", th: "ความสงบ" },
+        { en: "Sincerity", read: "ซิน-เซียร์-ริ-ตี้", th: "ความจริงใจ" },
+        { en: "Solidarity", read: "ซอล-ลิ-แดร์-ริ-ตี้", th: "ความสามัคคี" },
+        { en: "Spirituality", read: "สพิ-ริ-ชิว-แอล-ลิ-ตี้", th: "จิตวิญญาณ" },
+        { en: "Stability", read: "สตะ-บิล-ลิ-ตี้", th: "ความมั่นคง" },
+        { en: "Studious", read: "สทิว-ดี-อัส", th: "ขยันเรียน" },
+        { en: "Subtlety", read: "ซัท-เทิล-ตี้", th: "ความละเอียดอ่อน" },
+        { en: "Sympathy", read: "ซิม-พะ-ธี่", th: "ความเห็นใจ" },
+        { en: "Tactful", read: "แทคท์-ฟูล", th: "รู้จักกาลเทศะ" },
+        { en: "Tenacity", read: "เทน-แนส-ซิ-ตี้", th: "ความมุ่งมั่น" },
+        { en: "Thoroughness", read: "ธัร-โร-เนส", th: "ความละเอียด" },
+        { en: "Transcendence", read: "ทรานส์-เซน-เดนซ์", th: "ความเหนือโลก" },
+        { en: "Truthfulness", read: "ทรูธ-ฟูล-เนส", th: "ความสุจริต" },
+        { en: "Valor", read: "แวล-เลอร์", th: "ความกล้าหาญ" },
+        { en: "Versatility", read: "เวอร์-ซะ-ทิล-ลิ-ตี้", th: "ความหลากหลาย" },
+        { en: "Vigilance", read: "วิจ-จิ-เลนซ์", th: "การเฝ้าระวัง" },
+        { en: "Vitality", read: "ไว-แทล-ลิ-ตี้", th: "ความมีชีวิตชีวา" },
+        {
+          en: "Wholeheartedness",
+          read: "โฮล-ฮาร์ท-ทิด-เนส",
+          th: "ความจริงจัง",
+        },
+        { en: "Wonderment", read: "วัน-เดอร์-เมนท์", th: "ความประหลาดใจ" },
+        { en: "Worthiness", read: "เวิร์-ธี่-เนส", th: "ความคู่ควร" },
+        { en: "Zealousness", read: "เซล-ลัส-เนส", th: "ความกระตือรือร้น" },
+        { en: "Zest", read: "เซสท์", th: "ความกระตือรือร้น" },
+        { en: "Affability", read: "แอฟ-ฟะ-บิล-ลิ-ตี้", th: "ความเป็นมิตร" },
+        { en: "Attentiveness", read: "อะ-เทน-ทิฟ-เนส", th: "ความใส่ใจ" },
+        { en: "Authenticity", read: "อ็อ-ธัน-ทิส-ซิ-ตี้", th: "ความแท้จริง" },
+        { en: "Benevolence", read: "บิ-เนฟ-โว-เลนซ์", th: "ความเมตตา" },
+        { en: "Brilliance", read: "บริล-เลียนซ์", th: "ความฉลาด" },
+        { en: "Carefulness", read: "แคร์-ฟูล-เนส", th: "ความระมัดระวัง" },
+        { en: "Charisma", read: "คะ-ริส-มะ", th: "เสน่ห์" },
+        { en: "Clemency", read: "เคลม-เมน-ซี่", th: "ความกรุณา" },
+        { en: "Compassion", read: "คอม-แพช-ชัน", th: "ความเมตตา" },
+        { en: "Conscientiousness", read: "คอน-เชน-ชัส-เนส", th: "ความรอบคอบ" },
+        { en: "Decisiveness", read: "ดิ-ไซ-ซิฟ-เนส", th: "ความเด็ดขาด" },
+        {
+          en: "Dependability",
+          read: "ดิ-เพน-ดะ-บิล-ลิ-ตี้",
+          th: "ความน่าเชื่อถือ",
+        },
+        { en: "Devotion", read: "ดิ-โวท-ชัน", th: "ความจงรักภักดี" },
+        { en: "Discernment", read: "ดิ-เซิร์น-เมนท์", th: "ความสามารถแยกแยะ" },
+        { en: "Eloquence", read: "เอล-โล-เควนซ์", th: "วาทศิลป์" },
+        { en: "Empowerment", read: "เอม-เพา-เวอร์-เมนท์", th: "การเสริมพลัง" },
+        { en: "Idealism", read: "ไอ-เดียล-ลิส-ซึม", th: "อุดมคตินิยม" },
+        { en: "Implication", read: "อิม-พลิ-เค-ชัน", th: "นัยยะ" },
+        { en: "Judiciousness", read: "จิว-ดิช-ชัส-เนส", th: "ความฉลาดรอบคอบ" },
+        { en: "Abilities", read: "อะ-บิล-ลิ-ทีส", th: "ขีดความสามารถ" },
+        {
+          en: "Adaptability",
+          read: "อะ-แดป-ตะ-บิล-ลิ-ตี้",
+          th: "ความสามารถในการปรับตัว",
+        },
+        { en: "Adoration", read: "แอด-ดอ-เร-ชัน", th: "ความรักใคร่บูชา" },
+        { en: "Aesthetic", read: "เอส-เธ-ทิค", th: "เกี่ยวกับสุนทรียศาสตร์" },
+        { en: "Altogether", read: "ออล-ทู-เกธ-เธอร์", th: "ทั้งหมด" },
+        { en: "Ambition", read: "แอม-บิ-ชัน", th: "ความทะเยอทะยาน" },
+        { en: "Amiable", read: "เอ-เมีย-เบิล", th: "น่ารัก/เป็นมิตร" },
+        { en: "Analogy", read: "อะ-แนล-โล-จี", th: "การเปรียบเทียบ" },
+        { en: "Ancestry", read: "แอน-เซส-ทรี", th: "บรรพบุรุษ" },
+        { en: "Anecdote", read: "แอน-เน็ค-โดท", th: "เรื่องราวเล็กๆ น้อยๆ" },
+        { en: "Apparatus", read: "แอพ-พะ-เร-ทัส", th: "อุปกรณ์เครื่องมือ" },
+        { en: "Architect", read: "อาร์-คิ-เทคท์", th: "สถาปนิก" },
+        { en: "Aspiration", read: "แอส-พิ-เร-ชัน", th: "ความปรารถนา" },
+        { en: "Assurance", read: "อะ-ชัว-เรนซ์", th: "ความมั่นใจ" },
+        { en: "Backbone", read: "แบค-โบน", th: "กระดูกสันหลัง/หลักสำคัญ" },
+        { en: "Belief", read: "บิ-ลีฟ", th: "ความเชื่อ" },
+        { en: "Beverage", read: "เบฟ-เวอร์-เรจ", th: "เครื่องดื่ม" },
+        { en: "Biological", read: "ไบ-โอ-ลอ-จิ-คอล", th: "ทางชีววิทยา" },
+        {
+          en: "Breathtaking",
+          read: "เบรธ-เท-คิง",
+          th: "น่าทึ่งจนแทบหยุดหายใจ",
+        },
+        { en: "Broadcasting", read: "บรอด-แคส-ติง", th: "การกระจายเสียง" },
+        { en: "Catalogue", read: "แคท-ตะ-ล็อก", th: "บัญชีรายชื่อ" },
+        {
+          en: "Celestial",
+          read: "เซ-เลส-เชียล",
+          th: "เกี่ยวกับท้องฟ้า/สวรรค์",
+        },
+        { en: "Charming", read: "ชาร์ม-มิง", th: "มีเสน่ห์" },
+        { en: "Chivalry", read: "ชิ-วาล-รี", th: "มารยาทแบบสุภาพบุรุษ" },
+        { en: "Coexistence", read: "โค-เอ็ก-ซิส-เทนซ์", th: "การอยู่ร่วมกัน" },
+        { en: "Cognitive", read: "คอก-นิ-ทิฟ", th: "เกี่ยวกับกระบวนการคิด" },
+        { en: "Combination", read: "คอม-บิ-เน-ชัน", th: "การรวมกัน" },
+        {
+          en: "Companionship",
+          read: "คอม-แพน-เนียน-ชิพ",
+          th: "ความเป็นเพื่อนร่วมทาง",
+        },
+        { en: "Compromise", read: "คอม-พรอ-ไมซ์", th: "การประนีประนอม" },
+        {
+          en: "Configuration",
+          read: "คอน-ฟิก-กู-เร-ชัน",
+          th: "การจัดองค์ประกอบ",
+        },
+        { en: "Continuity", read: "คอน-ทิ-นู-อิ-ตี้", th: "ความต่อเนื่อง" },
+        {
+          en: "Contribution",
+          read: "คอน-ทริ-บิว-ชัน",
+          th: "การบริจาค/การสนับสนุน",
+        },
+        { en: "Counsel", read: "เคาน์-เซล", th: "ให้คำปรึกษา" },
+        { en: "Counterpart", read: "เคาน์-เทอร์-พาร์ท", th: "สิ่งที่คู่กัน" },
+        { en: "Covenant", read: "คัฟ-วีน-แนนท์", th: "พันธสัญญา" },
+        { en: "Criterion", read: "ไคร-ที-เรียน", th: "บรรทัดฐาน/เกณฑ์" },
+        { en: "Cuisine", read: "ควิ-ซีน", th: "สไตล์การทำอาหาร" },
+        { en: "Customary", read: "คัส-ตอม-มา-รี", th: "ตามธรรมเนียม" },
+        { en: "Dashboard", read: "แดช-บอร์ด", th: "แผงควบคุม" },
+        { en: "Database", read: "เด-ตะ-เบส", th: "ฐานข้อมูล" },
+        { en: "Deadline", read: "เดด-ไลน์", th: "กำหนดเส้นตาย" },
+        { en: "Decorum", read: "เด-คอ-รัม", th: "สมบัติผู้ดี/ความสุภาพ" },
+        { en: "Definition", read: "เดฟ-ฟิ-นิ-ชัน", th: "คำนิยาม" },
+        { en: "Dependency", read: "ดิ-เพน-เดน-ซี", th: "การพึ่งพาอาศัย" },
+        { en: "Description", read: "ดิ-สคริพ-ชัน", th: "การพรรณนา" },
+        { en: "Destiny", read: "เดส-ทิ-นี", th: "โชคชะตา" },
+        { en: "Diameter", read: "ได-แอม-มิ-เทอร์", th: "เส้นผ่านศูนย์กลาง" },
+        { en: "Discovery", read: "ดิส-คัฟ-เวอร์-รี", th: "การค้นพบ" },
+        {
+          en: "Distinction",
+          read: "ดิส-ทิงค์-ชัน",
+          th: "ความแตกต่าง/ความเด่น",
+        },
+        { en: "Dividend", read: "ดิ-วิ-เด็นด์", th: "เงินปันผล" },
+        { en: "Documentation", read: "ด็อค-ยู-เมน-เท-ชัน", th: "เอกสารประกอบ" },
+        { en: "Dynamism", read: "ได-นา-มิส-ซึม", th: "ความมีชีวิตชีวา" },
+        { en: "Ecosystem", read: "อี-โค-ซิส-เทม", th: "ระบบนิเวศ" },
+        { en: "Efficiency", read: "อิ-ฟิ-เชนซี", th: "ประสิทธิภาพ" },
+        { en: "Elegance", read: "เอล-ลิ-แกนซ์", th: "ความสง่างาม" },
+        { en: "Element", read: "เอล-เมนท์", th: "องค์ประกอบ" },
+        { en: "Elucidate", read: "อิ-ลู-ซิ-เดท", th: "ทำให้กระจ่าง" },
+        { en: "Emphasis", read: "เอ็ม-ฟะ-ซิส", th: "การเน้น" },
+        { en: "Empower", read: "เอม-เพา-เวอร์", th: "เสริมพลัง" },
+        { en: "Enigma", read: "อิ-นิ๊ก-มา", th: "ปริศนา" },
+        { en: "Enthusiasm", read: "อิน-ธู-เซีย-ซึม", th: "ความกระตือรือร้น" },
+        { en: "Entrepreneur", read: "ออน-เทรอ-เพอ-นัวร์", th: "ผู้ประกอบการ" },
+        { en: "Environment", read: "อิน-ไว-รอน-เมนท์", th: "สิ่งแวดล้อม" },
+        { en: "Equilibrium", read: "อี-ควิ-ลิ-เบรียม", th: "สมดุล" },
+        { en: "Equity", read: "อี-ควิ-ที", th: "ความยุติธรรม" },
+        { en: "Essential", read: "เอส-เซนเชียล", th: "จำเป็น" },
+        { en: "Ethical", read: "เอ-ทิค-คอล", th: "เกี่ยวกับจริยธรรม" },
+        { en: "Euphoria", read: "ยู-โฟ-เรีย", th: "ความสุขล้น" },
+        { en: "Excellence", read: "เอ็ก-เซล-เลนซ์", th: "ความเป็นเลิศ" },
+        { en: "Exceptional", read: "อิก-เซพ-ชัน-นอล", th: "พิเศษ" },
+        { en: "Exquisite", read: "อิก-ซควิซ-ซิท", th: "ประณีต" },
+        { en: "Extensive", read: "อิก-สเทน-ซีฟ", th: "กว้างขวาง" },
+        {
+          en: "Extraordinary",
+          read: "อิก-สตรอ-ดิน-นา-รี",
+          th: "ผิดปกติ/พิเศษ",
+        },
+        { en: "Facilitate", read: "ฟะ-ซิล-ลิ-เทท", th: "อำนวยความสะดวก" },
+        { en: "Fascinating", read: "แฟส-ซิ-เน-ทิง", th: "น่าหลงใหล" },
+        { en: "Feasible", read: "ฟี-ซิ-เบิล", th: "ทำได้/เป็นไปได้" },
+        { en: "Flawless", read: "ฟลอว์-เลส", th: "ไร้ที่ติ" },
+        { en: "Fortunate", read: "ฟอร์-จู-เนท", th: "โชคดี" },
+        { en: "Fragrance", read: "เฟรกรานซ์", th: "กลิ่นหอม" },
+        {
+          en: "Fulfillment",
+          read: "ฟูล-ฟิลล์-เมนท์",
+          th: "ความสำเร็จ/ความสมหวัง",
+        },
+        { en: "Generosity", read: "เจน-เนอ-รอ-ซิ-ตี้", th: "ความใจกว้าง" },
+        { en: "Genuine", read: "เจน-ยูอิน", th: "แท้จริง" },
+        { en: "Grace", read: "เกรส", th: "ความสง่างาม" },
+        { en: "Gratitude", read: "กรา-ทิ-ทูด", th: "ความกตัญญู" },
+        { en: "Harmony", read: "ฮาร์-โม-นี่", th: "ความกลมกลืน" },
+        { en: "Honesty", read: "ฮอน-เนส-ตี้", th: "ความซื่อสัตย์" },
+        { en: "Hopeful", read: "โฮป-ฟูล", th: "มีความหวัง" },
+        { en: "Humility", read: "ฮิว-มิล-ลิ-ตี้", th: "ความถ่อมตัว" },
+        { en: "Imagination", read: "อิ-มา-จิ-เน-ชัน", th: "จินตนาการ" },
+        {
+          en: "Impartiality",
+          read: "อิม-พาร์-เชีย-ลิ-ตี้",
+          th: "ความเป็นกลาง",
+        },
+        { en: "Inspiration", read: "อิน-สปิ-เร-ชัน", th: "แรงบันดาลใจ" },
+        { en: "Integrity", read: "อิน-เทก-ริ-ตี้", th: "ความซื่อสัตย์" },
+        {
+          en: "Intellectual",
+          read: "อิน-เทล-เลค-ชวล",
+          th: "เกี่ยวกับสติปัญญา",
+        },
+        {
+          en: "Introspection",
+          read: "อิน-ทรอส-เปค-ชัน",
+          th: "การพิจารณาตนเอง",
+        },
+        {
+          en: "Inventiveness",
+          read: "อิน-เวน-ทิฟ-เนส",
+          th: "ความคิดสร้างสรรค์",
+        },
+        {
+          en: "Invigorating",
+          read: "อิน-วิก-อะ-เรทิง",
+          th: "กระตุ้นให้มีชีวิตชีวา",
+        },
+        { en: "Irrigation", read: "อิ-ริ-เก-ชัน", th: "การชลประทาน" },
+        { en: "Judgment", read: "จิว-ดจ์-เมนท์", th: "การตัดสินใจ" },
+        {
+          en: "Justification",
+          read: "จัส-ติ-ฟิ-เค-ชัน",
+          th: "การพิสูจน์ความถูกต้อง",
+        },
+        { en: "Knowledgeable", read: "นอล-ลี-เจอะ-เบิล", th: "มีความรู้" },
+        { en: "Loyalty", read: "ลอย-อัล-ที", th: "ความภักดี" },
+        {
+          en: "Luminary",
+          read: "ลู-มิ-นา-รี่",
+          th: "บุคคลที่มีชื่อเสียง/ส่องสว่าง",
+        },
+        { en: "Magnificent", read: "แมก-นิ-ฟิ-เซนต์", th: "งดงาม/ยิ่งใหญ่" },
+        { en: "Mastery", read: "มาส-เทอ-รี", th: "ความเชี่ยวชาญ" },
+        {
+          en: "Meticulousness",
+          read: "เมท-ทิค-คิว-ลัส-เนส",
+          th: "ความพิถีพิถัน",
+        },
+        { en: "Mindset", read: "ไมน์ด-เซ็ต", th: "กรอบความคิด" },
+        { en: "Motivation", read: "โมทิ-เว-ชัน", th: "แรงจูงใจ" },
+        { en: "Multifaceted", read: "มัล-ติ-แฟซ-เท็ด", th: "หลายแง่มุม" },
+        { en: "Multilingual", read: "มัล-ติ-ลิง-กวอล", th: "หลายภาษา" },
+        {
+          en: "Multitasking",
+          read: "มัล-ติ-ทาส-กิ้ง",
+          th: "ทำหลายอย่างพร้อมกัน",
+        },
+        { en: "Nurturing", read: "เนอร์-เชอ-ริง", th: "การเลี้ยงดู/สนับสนุน" },
+        { en: "Observant", read: "ออบ-เซอร์-แวนท์", th: "สังเกตดี" },
+        { en: "Optimistic", read: "อ็อพ-ติ-มิ-สติก", th: "มองโลกในแง่ดี" },
+        { en: "Organized", read: "ออร์-กาไนซ์ด", th: "มีระเบียบ" },
+        {
+          en: "Originality",
+          read: "โอ-ริจิ-นัล-ลิ-ตี้",
+          th: "ความเป็นต้นฉบับ",
+        },
+        { en: "Outlook", read: "เอาท์-ลุค", th: "ทัศนคติ/มุมมอง" },
+        { en: "Overcome", read: "โอเวอร์-คัม", th: "เอาชนะ" },
+        { en: "Overwhelming", read: "โอเวอร์-เวลมิ่ง", th: "ล้นหลาม/มากมาย" },
+        { en: "Passion", read: "แพช-ชัน", th: "ความหลงใหล" },
+        { en: "Perceptive", read: "เพอร์-เซพ-ทิฟ", th: "มีความเข้าใจ" },
+        { en: "Perseverance", read: "เพอร์-ซิ-วี-เรนซ์", th: "ความพยายาม" },
+        { en: "Persistence", read: "เพอร์-ซิส-เทนซ์", th: "ความพากเพียร" },
+        { en: "Perspective", read: "เพอร์-สเปค-ทิฟ", th: "มุมมอง" },
+        { en: "Phenomenal", read: "ฟี-โน-เม-นัล", th: "ยอดเยี่ยม/น่าทึ่ง" },
+        {
+          en: "Philosophical",
+          read: "ฟิ-โล-ซอ-ฟิค-คอล",
+          th: "เกี่ยวกับปรัชญา",
+        },
+        { en: "Pioneering", read: "ไพโอ-เนียริง", th: "บุกเบิก" },
+        { en: "Pivotal", read: "พิ-โวทัล", th: "สำคัญมาก" },
+        { en: "Plentiful", read: "เพลน-ทิฟูล", th: "มากมาย" },
+        { en: "Poignant", read: "พอยน์-แอนท์", th: "สะเทือนใจ/กินใจ" },
+        { en: "Polished", read: "โพลิชด์", th: "ขัดเกลา/เรียบร้อย" },
+        {
+          en: "Practicality",
+          read: "แปรค-ติ-คัล-ลิ-ตี้",
+          th: "ความเป็นจริง/ใช้งานได้จริง",
+        },
+        { en: "Precision", read: "พรี-ซิชัน", th: "ความแม่นยำ" },
+        { en: "Proactive", read: "โพรแอคทีฟ", th: "เชิงรุก" },
+        { en: "Proficient", read: "โพร-ฟิช-เชินท์", th: "มีความชำนาญ" },
+        { en: "Progressive", read: "โพร-เกรส-ซิฟ", th: "ก้าวหน้า" },
+        { en: "Prominent", read: "พรอ-มิ-เนินท์", th: "โดดเด่น" },
+        { en: "Prosperous", read: "พรอส-เพอ-รัส", th: "มั่งคั่ง/รุ่งเรือง" },
+        { en: "Punctuality", read: "พังค์-ชัว-ลิ-ตี้", th: "ความตรงต่อเวลา" },
+        { en: "Purposeful", read: "เพอร์-โพส-ฟูล", th: "มีจุดมุ่งหมาย" },
+        { en: "Rational", read: "แรช-นะล", th: "มีเหตุผล" },
+        { en: "Receptive", read: "รี-เซพ-ทิฟ", th: "เปิดรับ" },
+        { en: "Reciprocity", read: "รี-ซิ-โปร-ซิ-ที", th: "การตอบแทน" },
+        { en: "Rejuvenation", read: "รี-จู-เว-เน-ชัน", th: "การฟื้นฟู" },
+        {
+          en: "Reliability",
+          read: "รี-ไล-อะ-บิล-ลิ-ตี้",
+          th: "ความน่าเชื่อถือ",
+        },
+        {
+          en: "Resilience",
+          read: "รี-ซิล-เยินซ์",
+          th: "ความยืดหยุ่น/ความสามารถในการฟื้นตัว",
+        },
+        {
+          en: "Resourcefulness",
+          read: "รี-ซอร์ส-ฟูล-เนส",
+          th: "ความสามารถในการแก้ปัญหา",
+        },
+        { en: "Respectfulness", read: "รี-สเปคท์-ฟูล-เนส", th: "ความเคารพ" },
+        {
+          en: "Responsibility",
+          read: "รีส-พอน-ซิบิล-ลิ-ตี้",
+          th: "ความรับผิดชอบ",
+        },
+        { en: "Reverence", read: "เรเวอเรนซ์", th: "ความเคารพอย่างสูง" },
+        { en: "Sagaciousness", read: "ซะแกสเชียสเนส", th: "ความฉลาดรอบคอบ" },
+        {
+          en: "Sanguine",
+          read: "แซงกวิน",
+          th: "มองโลกในแง่ดีแม้ในสถานการณ์ที่ยากลำบาก",
+        },
+        { en: "Satisfaction", read: "แซทิสแฟคชั่น", th: "ความพึงพอใจ" },
+        {
+          en: "Scrupulousness",
+          read: "สครูพิวลัสเนส",
+          th: "ความละเอียดรอบคอบ/มีจริยธรรม",
+        },
+        {
+          en: "Serendipity",
+          read: "เซอร์เรนดิพิตี้",
+          th: "โชคดีที่ค้นพบสิ่งที่ดีโดยบังเอิญ",
+        },
+        { en: "Seriousness", read: "ซี-เรียส-เนส", th: "ความจริงจัง" },
+        { en: "Sincerity", read: "ซิน-เซียร์-ริ-ตี้", th: "ความจริงใจ" },
+        {
+          en: "Sociability",
+          read: "โซ-เชีย-บิล-ลิ-ตี้",
+          th: "ความสามารถในการเข้าสังคม",
+        },
+        {
+          en: "Sophistication",
+          read: "โซ-ฟิส-ทิเก-ชัน",
+          th: "ความซับซ้อน/ความมีรสนิยม",
+        },
+        {
+          en: "Spontaneity",
+          read: "สปอน-เทน-นิ-ตี้",
+          th: "ความเป็นธรรมชาติ/ไม่วางแผน",
+        },
+        { en: "Stamina", read: "สแตม-มิน่า", th: "ความอดทน/พลังงาน" },
+        {
+          en: "Steadfastness",
+          read: "สเตด-ฟาสต์-เนส",
+          th: "ความมั่นคง/ไม่เปลี่ยนแปลง",
+        },
+        { en: "Strategic", read: "สตรา-ที-จิค", th: "เกี่ยวกับกลยุทธ์" },
+        { en: "Strength", read: "สเตร็งธ์", th: "ความแข็งแรง/จุดแข็ง" },
+        {
+          en: "Substantiality",
+          read: "ซับ-สแตน-เชียล-ลิ-ตี้",
+          th: "ความสำคัญ/มีสาระสำคัญ",
+        },
+        { en: "Succinctness", read: "ซัค-ซิงค์ทเนส", th: "ความกระชับ" },
+        { en: "Sufficiency", read: "ซัฟฟิชันซี", th: "ความเพียงพอ" },
+        { en: "Supplemenary", read: "ซัพพลีเมนทารี", th: "เสริม/เพิ่มเติม" },
+        { en: "Supportive", read: "ซัพ-พอร์-ทิฟ", th: "ให้การสนับสนุน" },
+        {
+          en: "Sustainability",
+          read: "ซัส-เทน-อะ-บิล-ลิ-ตี้",
+          th: "ความยั่งยืน",
+        },
+        { en: "Symmetry", read: "ซิม-มะ-ทรี", th: "ความสมมาตร" },
+        {
+          en: "Synergy",
+          read: "ซิน-เนอร์-จี",
+          th: "ความร่วมมือที่ทำให้เกิดผลลัพธ์ที่ดีกว่า",
+        },
+        { en: "Synthesis", read: "ซิน-เธ-ซิส", th: "การสังเคราะห์" },
+        { en: "Systematic", read: "ซิส-เท-แมต-ทิค", th: "เป็นระบบ/มีระเบียบ" },
+        {
+          en: "Tactfulness",
+          read: "แทค-ทิฟ-เนส",
+          th: "ความมีไหวพริบในการพูดจา",
+        },
+        {
+          en: "Tenacity",
+          read: "เท-นา-ซิ-ที",
+          th: "ความมุ่งมั่น/ความเหนียวแน่น",
+        },
+        { en: "Thoroughness", read: "ธัร-โร-เนส", th: "ความละเอียด" },
+        { en: "Transcendence", read: "ทรานส์-เซน-เดนซ์", th: "ความเหนือโลก" },
+        { en: "Truthfulness", read: "ทรูธ-ฟูล-เนส", th: "ความสุจริต" },
+        { en: "Valor", read: "แวล-เลอร์", th: "ความกล้าหาญ" },
+        { en: "Versatility", read: "เวอร์-ซะ-ทิล-ลิ-ตี้", th: "ความหลากหลาย" },
+        { en: "Vigilance", read: "วิจ-จิ-เลนซ์", th: "การเฝ้าระวัง" },
+        { en: "Vitality", read: "ไว-แทล-ลิ-ตี้", th: "ความมีชีวิตชีวา" },
+        {
+          en: "Wholeheartedness",
+          read: "โฮล-ฮาร์ท-ทิด-เนส",
+          th: "ความจริงจัง",
+        },
+        { en: "Wonderment", read: "วัน-เดอร์-เมนท์", th: "ความประหลาดใจ" },
+        { en: "Worthiness", read: "เวิร์-ธี่-เนส", th: "ความคู่ควร" },
+        { en: "Zeal", read: "ซีล", th: "ความกระตือรือร้น" },
+        { en: "Zenith", read: "ซี-นิธ", th: "จุดสูงสุด" },
+        { en: "Zest", read: "เซสท์", th: "ความกระตือรือร้น/รสชาติที่ดี" },
+        { en: "Zodiac", read: "โซ-ดิ-แอค", th: "จักรราศี" },
+        { en: "Zoology", read: "โซ-ออล-โล-จี", th: "สัตววิทยา" },
+        { en: "Zymology", read: "ไซ-โม-โล-จี", th: "การศึกษาการหมัก" },
+        { en: "Abundance", read: "อะ-บัน-แดนซ์", th: "ความอุดมสมบูรณ์" },
+        { en: "Accomplishment", read: "อะ-คอม-พลิช-เมนท์", th: "ความสำเร็จ" },
+        {
+          en: "Accountability",
+          read: "อะ-เคาน์-ทะ-บิล-ลิ-ตี้",
+          th: "ความรับผิดชอบ",
+        },
+        { en: "Achievement", read: "อะ-ชีฟ-เมนท์", th: "ความสำเร็จ" },
+        {
+          en: "Acknowledgment",
+          read: "แอค-นอล-เลดจ์-เมนท์",
+          th: "การยอมรับ/การรับรู้",
+        },
+        { en: "Acquisition", read: "อะ-ควิ-ซิ-ชัน", th: "การได้มา" },
+        { en: "Adaptation", read: "อะ-แดป-เท-ชัน", th: "การปรับตัว" },
+        { en: "Adversity", read: "แอด-เวอร์-ซิ-ที", th: "ความยากลำบาก" },
+        { en: "Affection", read: "แอฟ-เฟค-ชัน", th: "ความรัก/ความผูกพัน" },
+        { en: "Agility", read: "อะ-จิล-ลิ-ตี้", th: "ความคล่องแคล่ว" },
+        { en: "Altruism", read: "อัล-ทรู-อิซึม", th: "ความเห็นแก่ผู้อื่น" },
+        { en: "Ambiguity", read: "แอม-บิก-ยู-อิ-ที", th: "ความกำกวม" },
+        {
+          en: "Amelioration",
+          read: "อะ-เมล-ลิ-โอ-เร-ชัน",
+          th: "การปรับปรุงให้ดีขึ้น",
+        },
+        {
+          en: "Analytical",
+          read: "อะ-นา-ลิทิคัล",
+          th: "เกี่ยวกับการวิเคราะห์",
+        },
+        { en: "Anomaly", read: "อะ-นอม-อะ-ลี", th: "ความผิดปกติ" },
+        {
+          en: "Anticipation",
+          read: "แอนทิซิพาเชียน",
+          th: "การคาดการณ์/การรอคอยอย่างใจจดใจจ่อ",
+        },
+        {
+          en: "Appreciation",
+          read: "แอพพรีซีเอชั่น",
+          th: "ความชื่นชม/การประเมินค่า",
+        },
+        {
+          en: "Approachability",
+          read: "อะพโพรชอะบิลิตี้",
+          th: "ความสามารถในการเข้าถึง/เป็นมิตร",
+        },
+        {
+          en: "Arbitrary",
+          read: "อาร์บิทรารี",
+          th: "ตามอำเภอใจ/สุ่มสี่สุ่มห้า",
+        },
+        {
+          en: "Articulation",
+          read: "อาร์-ทิค-ยู-เล-ชัน",
+          th: "การออกเสียง/การแสดงออก",
+        },
+        {
+          en: "Assertiveness",
+          read: "อะ-เซอร์-ทีฟ-เนส",
+          th: "ความมั่นใจในการแสดงออก",
+        },
+        {
+          en: "Assimilation",
+          read: "อะ-ซิม-มิ-เล-ชัน",
+          th: "การดูดซึม/การปรับตัวเข้ากับสิ่งใหม่",
+        },
+        { en: "Assumption", read: "อะ-ซัม-พ์-ชัน", th: "การสมมติ/ข้อสมมติฐาน" },
+        { en: "Astute", read: "อะ-สตูท", th: "ฉลาดหลักแหลม" },
+        { en: "Attentiveness", read: "อะ-เทน-ทีฟ-เนส", th: "ความใส่ใจ" },
+        { en: "Authenticity", read: "ออ-เธน-ทิซิ-ที", th: "ความแท้จริง" },
+        { en: "Autonomy", read: "ออ-ตอ-โน-มี", th: "ความเป็นอิสระ" },
+        { en: "Awe", read: "ออว์", th: "ความเคารพ/ความกลัวเล็กน้อย" },
+        { en: "Awareness", read: "อะ-แวร์-เนส", th: "ความตระหนักรู้" },
+        { en: "Balance", read: "บาลานซ์", th: "ความสมดุล" },
+        { en: "Belief", read: "บีลีฟ", th: "ความเชื่อ" },
+        { en: "Benevolence", read: "เบ-เน-โว-เลนซ์", th: "ความเมตตา" },
+        { en: "Bliss", read: "บลิสส์", th: "ความสุขล้น" },
+        { en: "Boldness", read: "โบลด์-เนส", th: "ความกล้าหาญ" },
+        { en: "Brilliance", read: "บริล-เลียนซ์", th: "ความฉลาด/ความโดดเด่น" },
+        { en: "Camaraderie", read: "คามา-รา-เดอรี", th: "มิตรภาพที่ดี" },
+        { en: "Capacity", read: "คะ-พะ-ซิ-ที", th: "ความสามารถ" },
+        { en: "Captivation", read: "แคป-ทิ-เว-ชัน", th: "การดึงดูดใจ" },
+        { en: "Caution", read: "คอ-ชัน", th: "ความระมัดระวัง" },
+        { en: "Celebration", read: "เซเล-เบร-ชัน", th: "การเฉลิมฉลอง" },
+        { en: "Challenge", read: "แชล-เลนจ์", th: "ความท้าทาย" },
+        { en: "Charisma", read: "คาริสม่า", th: "เสน่ห์" },
+        { en: "Civility", read: "ซิ-วิล-ลิ-ตี้", th: "ความสุภาพ" },
+        { en: "Clarity", read: "แคล-ริ-ที", th: "ความชัดเจน" },
+        { en: "Cognition", read: "คอก-นิ-ชัน", th: "การรับรู้/การรู้คิด" },
+        { en: "Collaboration", read: "คอล-ลา-บอ-เร-ชัน", th: "การร่วมมือกัน" },
+        { en: "Colloquialism", read: "คอล-โล-ควอ-ลิซึม", th: "สำนวนภาษาพูด" },
+        { en: "Colossal", read: "โคลอส-ซัล", th: "มหึมา/ใหญ่โต" },
+        {
+          en: "Composure",
+          read: "คอมโพสเชอร์",
+          th: "ความสงบใจ/ความควบคุมอารมณ์",
+        },
+        { en: "Comprehension", read: "คอมพรีเฮนชั่น", th: "ความเข้าใจ" },
+        { en: "Concentration", read: "คอนเซนเทรชัน", th: "สมาธิ/การจดจ่อ" },
+        {
+          en: "Conceptualization",
+          read: "คอนเซ็ปชวลไลเซชัน",
+          th: "การสร้างแนวคิด/การทำให้เป็นรูปธรรม",
+        },
+        { en: "Conducive", read: "คอน-ดู-ซีฟ", th: "เอื้อให้เกิด" },
+        { en: "Confidence", read: "คอน-ฟิ-เดนซ์", th: "ความมั่นใจ" },
+        {
+          en: "Conformity",
+          read: "คอน-ฟอร์-มิ-ที",
+          th: "การปฏิบัติตาม/ความเหมือนกัน",
+        },
+        {
+          en: "Congeniality",
+          read: "คอน-จี-นี-อะ-ลิ-ตี้",
+          th: "ความเป็นมิตร/เข้ากันได้ดี",
+        },
+        {
+          en: "Connoisseurship",
+          read: "คอน-นอย-เซอร์-ชิพ",
+          th: "ความรู้ลึกซึ้งในเรื่องใดเรื่องหนึ่ง",
+        },
+        { en: "Consensus", read: "คอน-เซน-ซัส", th: "ความเห็นพ้องต้องกัน" },
+        { en: "Consistency", read: "คอน-ซิส-เทนซ์", th: "ความสม่ำเสมอ" },
+        {
+          en: "Constructiveness",
+          read: "คอนสตรัคทีฟเนส",
+          th: "ความสร้างสรรค์/เป็นประโยชน์",
+        },
+        {
+          en: "Contemplation",
+          read: "คอนเท็มพลเลชัน",
+          th: "การไตร่ตรอง/การพิจารณาอย่างลึกซึ้ง",
+        },
+        { en: "Contentment", read: "คอนเท็นท์เมนท์", th: "ความพึงพอใจ" },
+        { en: "Continuity", read: "คอนทินิวอิตี้", th: "ความต่อเนื่อง" },
+        {
+          en: "Contrivance",
+          read: "คอนทริเวินซ์",
+          th: "การวางแผน/การประดิษฐ์คิดค้น",
+        },
+        {
+          en: "Conviviality",
+          read: "คอนวิวิอัลลิที",
+          th: "ความสนุกสนาน/การอยู่ร่วมกันอย่างมีความสุข",
+        },
+        { en: "Cooperation", read: "โค-ออ-เพอ-เร-ชัน", th: "ความร่วมมือ" },
+        { en: "Coordination", read: "โค-ออร์-ดิ-เน-ชัน", th: "การประสานงาน" },
+        { en: "Courage", read: "คอ-เรจ", th: "ความกล้าหาญ" },
+        { en: "Courtesy", read: "คอร์-ทิซี่", th: "ความสุภาพ/มารยาท" },
+        { en: "Creativity", read: "ครีเอทีวิ-ที", th: "ความคิดสร้างสรรค์" },
+        { en: "Credibility", read: "เครดิ-บิล-ลิ-ตี้", th: "ความน่าเชื่อถือ" },
+        { en: "Curiosity", read: "คิว-ริ-โอ-ซิ-ที", th: "ความอยากรู้อยากเห็น" },
+        { en: "Daring", read: "แด-ริง", th: "ความกล้าหาญ" },
+        { en: "Decisiveness", read: "ดี-ไซ-ซีฟ-เนส", th: "ความเด็ดขาด" },
+        { en: "Dedication", read: "เดด-ดิ-เค-ชัน", th: "ความทุ่มเท" },
+        {
+          en: "Delightfulness",
+          read: "ดี-ไลท์-ฟูล-เนส",
+          th: "ความน่ารื่นรมย์",
+        },
+        {
+          en: "Dependability",
+          read: "ดี-เพน-ดะ-บิล-ลิ-ตี้",
+          th: "ความน่าเชื่อถือ",
+        },
+        {
+          en: "Determination",
+          read: "ดี-เทอร์-มิ-เน-ชัน",
+          th: "ความมุ่งมั่น/การตัดสินใจ",
+        },
+        { en: "Diligence", read: "ดิ-ลิจ-เจินซ์", th: "ความขยันหมั่นเพียร" },
+        {
+          en: "Diplomacy",
+          read: "ดิพโลมา-ซี",
+          th: "การทูต/การมีไหวพริบทางสังคม",
+        },
+        { en: "Discipline", read: "ดิสซิพลิน", th: "วินัย" },
+        {
+          en: "Discretion",
+          read: "ดิส-ครีชัน",
+          th: "การมีวิจารณญาณ/การระมัดระวังในการพูดหรือทำสิ่งต่างๆ",
+        },
+        { en: "Diversity", read: "ไดเวอร์ซิตี้", th: "ความหลากหลาย" },
+        { en: "Dynamism", read: "ได-นา-มิสซึม", th: "ความมีชีวิตชีวา/พลังงาน" },
+        { en: "Eagerness", read: "อี-เกอร์-เนส", th: "ความกระตือรือร้น" },
+        {
+          en: "Ebullience",
+          read: "อี-บัล-เลียนซ์",
+          th: "ความกระตือรือร้น/ความมีชีวิตชีวา",
+        },
+        {
+          en: "Eclecticism",
+          read: "อี-คเลค-ทิซึม",
+          th: "การเลือกใช้สิ่งที่ดีที่สุดจากหลายแหล่ง",
+        },
+        { en: "Efficiency", read: "อี-ฟิ-เชินซี", th: "ประสิทธิภาพ" },
+        { en: "Elegance", read: "เอล-เล-แกนซ์", th: "ความสง่างาม" },
+        { en: "Empathy", read: "เอ็ม-พะ-ธี", th: "ความเข้าอกเข้าใจ" },
+        {
+          en: "Empowerment",
+          read: "เอ็ม-พาวเวอร์-เมนท์",
+          th: "การเสริมสร้างพลัง/การให้อำนาจ",
+        },
+        { en: "Enthusiasm", read: "เอ็น-ธู-เซียสซึม", th: "ความกระตือรือร้น" },
+        {
+          en: "Entrepreneurship",
+          read: "ออน-เทรอ-เพอ-นัวร์-ชิพ",
+          th: "การเป็นผู้ประกอบการ",
+        },
+        {
+          en: "Equanimity",
+          read: "อี-ควา-นิ-มิตี",
+          th: "ความสงบใจ/ความไม่หวั่นไหว",
+        },
+        {
+          en: "Equity",
+          read: "อีควิที",
+          th: "ความยุติธรรม/ส่วนแบ่งที่เป็นธรรม",
+        },
+        {
+          en: "Erudition",
+          read: "เออร์ยูดิชัน",
+          th: "ความรู้ลึกซึ้ง/การศึกษาอย่างกว้างขวาง",
+        },
+        { en: "Ethicality", read: "เอ-ทิค-คัล-ลิ-ตี้", th: "ความมีจริยธรรม" },
+        { en: "Euphoria", read: "ยู-โฟ-เรีย", th: "ความสุขล้น" },
+        { en: "Excellence", read: "เอ็กซ์-เซล-เลนซ์", th: "ความเป็นเลิศ" },
+        {
+          en: "Exhilaration",
+          read: "เอ็กซ์-ฮิ-ลา-เร-ชัน",
+          th: "ความตื่นเต้น/ความสนุกสนาน",
+        },
+        {
+          en: "Exuberance",
+          read: "เอ็กซ์-ยู-เบอ-รันซ์",
+          th: "ความกระตือรือร้น/ความมีชีวิตชีวา",
+        },
+        {
+          en: "Facilitation",
+          read: "ฟะ-ซิ-ลิ-เท-ชัน",
+          th: "การอำนวยความสะดวก",
+        },
+        {
+          en: "Fidelity",
+          read: "ฟิ-เดล-ลิ-ตี้",
+          th: "ความซื่อสัตย์/ความจงรักภักดี",
+        },
+        { en: "Fluency", read: "ฟลู-เอน-ซี", th: "ความคล่องแคล่ว" },
+        { en: "Fortitude", read: "ฟอร์-ทิจูด", th: "ความกล้าหาญ/ความอดทน" },
+        { en: "Frugality", read: "ฟรู-กา-ลิ-ตี้", th: "ความประหยัด" },
+        {
+          en: "Fulfillment",
+          read: "ฟูล-ฟิลล์-เมนท์",
+          th: "ความสมหวัง/การเติมเต็ม",
+        },
+        { en: "Generosity", read: "เจน-เนอ-รอ-ซิ-ที", th: "ความใจกว้าง" },
+        { en: "Genuineness", read: "เจน-ยู-อิน-เนส", th: "ความแท้จริง" },
+        { en: "Gratitude", read: "กรา-ทิ-ทูด", th: "ความกตัญญู" },
+        { en: "Growth", read: "โกรธ", th: "การเติบโต/การพัฒนา" },
+        { en: "Guidance", read: "ไกด์-แอนซ์", th: "คำแนะนำ/การชี้นำ" },
+        { en: "Harmony", read: "ฮาร์โมนี่", th: "ความกลมกลืน/ความสามัคคี" },
+        { en: "Honesty", read: "ฮอน-เนส-ที", th: "ความซื่อสัตย์" },
+        { en: "Hopefulness", read: "โฮป-ฟูล-เนส", th: "ความมีหวัง" },
+        { en: "Humility", read: "ฮิว-มิล-ลิ-ตี้", th: "ความถ่อมตัว" },
+        { en: "Humor", read: "ฮิว-เมอร์", th: "อารมณ์ขัน" },
+        { en: "Idealism", read: "ไอ-ดี-อะ-ลิซึม", th: "อุดมคติ" },
+        { en: "Imagination", read: "อิม-เมจ-อะ-เน-ชัน", th: "จินตนาการ" },
+        {
+          en: "Impeccability",
+          read: "อิม-เพค-คะ-บิล-ลิ-ตี้",
+          th: "ความไม่มีที่ติ",
+        },
+        {
+          en: "Impartiality",
+          read: "อิม-พาร์-เชียล-ลิ-ตี้",
+          th: "ความเป็นกลาง",
+        },
+        {
+          en: "Impassion",
+          read: "อิม-แพช-เชิน",
+          th: "ความกระตือรือร้น/ความมีชีวิตชีวา",
+        },
+
+        {
+          en: "Impartiality",
+          read: "อิม-พาร์-เชียล-ลิ-ตี้",
+          th: "ความเป็นกลาง",
+        },
+        {
+          en: "Impeccability",
+          read: "อิม-เพค-คะ-บิล-ลิ-ตี้",
+          th: "ความไม่มีที่ติ",
+        },
+        {
+          en: "Impressionability",
+          read: "อิม-เพรส-ชัน-อะบิล-ลิ-ตี้",
+          th: "ความประทับใจง่าย/ความสามารถในการรับรู้สิ่งต่างๆ",
+        },
+        {
+          en: "Improvisation",
+          read: "อิม-พรวี-เซชัน",
+          th: "การแสดงสด/การทำสิ่งต่างๆโดยไม่วางแผนล่วงหน้า",
+        },
+        { en: "Inspiration", read: "อินสปิเรชัน", th: "แรงบันดาลใจ" },
+        {
+          en: "Integrity",
+          read: "อินเทกริที",
+          th: "ความซื่อสัตย์/ความสมบูรณ์",
+        },
+        { en: "Intellect", read: "อินเทลเล็คท์", th: "สติปัญญา/ความคิด" },
+        {
+          en: "Intuition",
+          read: "อินทูอิชั่น",
+          th: "สัญชาตญาณ/การเข้าใจโดยไม่ต้องใช้เหตุผล",
+        },
+        {
+          en: "Inventiveness",
+          read: "อินเวนทิฟเนส",
+          th: "ความคิดสร้างสรรค์/ความสามารถในการประดิษฐ์คิดค้น",
+        },
+        {
+          en: "Invigoration",
+          read: "อินวิกกะเรชัน",
+          th: "การกระตุ้น/การทำให้มีชีวิตชีวา",
+        },
+        { en: "Irrationality", read: "อิ-แรช-นะ-ลิ-ที", th: "ความไม่มีเหตุผล" },
+        {
+          en: "Irresistibility",
+          read: "อิ-รี-ซิส-ทิ-บิล-ลิ-ตี้",
+          th: "ความที่ไม่สามารถต้านทานได้",
+        },
+        {
+          en: "Judiciousness",
+          read: "จู-ดิ-เชียสเนส",
+          th: "ความมีวิจารณญาณ/การตัดสินใจอย่างรอบคอบ",
+        },
+        { en: "Justice", read: "จัส-ติซ", th: "ความยุติธรรม" },
+        { en: "Keeness", read: "คีนเนส", th: "ความกระตือรือร้น/ความเฉียบแหลม" },
+        { en: "Kindness", read: "ไคน์ด-เนส", th: "ความเมตตา" },
+        {
+          en: "Knowledgeability",
+          read: "นอลเลดจะบิลลิที",
+          th: "ความรู้/ความสามารถในการให้ข้อมูลที่ถูกต้อง",
+        },
+        { en: "Kudos", read: "คู-ดอส", th: "คำชมเชย/เกียรติยศ" },
+        { en: "Laughter", read: "ลาฟ-เทอร์", th: "เสียงหัวเราะ" },
+        { en: "Leadership", read: "ลีด-เดอร์-ชิพ", th: "ความเป็นผู้นำ" },
+        { en: "Learning", read: "เลิร์นนิ่ง", th: "การเรียนรู้" },
+        {
+          en: "Liberality",
+          read: "ไล-เบอ-รัล-ลิ-ตี้",
+          th: "ความใจกว้าง/ความมีเสรีภาพ",
+        },
+        { en: "Liberty", read: "ลิบ-เบอ-ที", th: "เสรีภาพ" },
+        { en: "Liveliness", read: "ไลฟ์-ลี-เนส", th: "ความมีชีวิตชีวา" },
+        { en: "Logic", read: "โลจิก", th: "ตรรกะ" },
+        { en: "Love", read: "เลิฟ", th: "ความรัก" },
+        { en: "Loyalty", read: "ลอย-อะ-ลิ-ตี้", th: "ความจงรักภักดี" },
+        {
+          en: "Lucidity",
+          read: "ลูซิด-อะบิล-ลิ-ตี้",
+          th: "ความชัดเจน/ความสามารถในการคิดอย่างชัดเจน",
+        },
+        { en: "Luminosity", read: "ลูมิ-โนซิตี้", th: "ความสว่าง/ความโดดเด่น" },
+        {
+          en: "Lustrousness",
+          read: "ลัส-ตรัส-เนส",
+          th: "ความเงางาม/ความโดดเด่น",
+        },
+        {
+          en: "Magnanimity",
+          read: "แมก-นา-นิม-มิตี",
+          th: "ความใจใหญ่/ความมีเมตตา",
+        },
+        { en: "Majesty", read: "แมจ-เอส-ที", th: "ความยิ่งใหญ่/ความสง่างาม" },
+        {
+          en: "Mastery",
+          read: "มาส-เทอ-รี",
+          th: "ความชำนาญ/การควบคุมอย่างสมบูรณ์",
+        },
+        {
+          en: "Maturity",
+          read: "มา-ชัว-ริ-ที",
+          th: "ความเป็นผู้ใหญ่/ความสมบูรณ์",
+        },
+        { en: "Melodiousness", read: "เมโล-ดิ-อัสเนส", th: "ความไพเราะ" },
+        {
+          en: "Meticulousness",
+          read: "เมทิคิวลัสเนส",
+          th: "ความพิถีพิถัน/ความละเอียดรอบคอบ",
+        },
+        {
+          en: "Mindfulness",
+          read: "มายด์ฟูลเนส",
+          th: "การมีสติ/การใส่ใจในปัจจุบัน",
+        },
+        { en: "Modesty", read: "โมด-เอส-ที", th: "ความถ่อมตัว" },
+        { en: "Motivation", read: "โม-ทิ-เว-ชัน", th: "แรงจูงใจ" },
+        {
+          en: "Multifacetedness",
+          read: "มัลติแฟซิเต็ดเนส",
+          th: "ความหลากหลายด้าน/หลายแง่มุม",
+        },
+        {
+          en: "Multilingualism",
+          read: "มัลติ-ลิงกวอลิสซึม",
+          th: "การพูดได้หลายภาษา",
+        },
+        {
+          en: "Multitasking",
+          read: "มัลติทาสกิ้ง",
+          th: "การทำงานหลายอย่างพร้อมกัน",
+        },
+        { en: "Mysteriousness", read: "มิซทีเรียสเนส", th: "ความลึกลับ" },
+        {
+          en: "Nobility",
+          read: "โน-บิล-ลิ-ตี้",
+          th: "ความสูงส่ง/ความมีเกียรติ",
+        },
+        {
+          en: "Nonchalance",
+          read: "นอน-ชา-ลานซ์",
+          th: "ความไม่แยแส/ความเฉยเมย",
+        },
+        {
+          en: "Nurturing",
+          read: "เนอร์-เชอ-ริง",
+          th: "การเลี้ยงดู/การสนับสนุน",
+        },
+        {
+          en: "Objectivity",
+          read: "ออบ-เจค-ทิ-วิ-ที",
+          th: "ความเป็นกลาง/ความไม่มีอคติ",
+        },
+        {
+          en: "Observance",
+          read: "อบ-เซอร์-เวินซ์",
+          th: "การปฏิบัติตาม/การเฝ้าระวัง",
+        },
+        { en: "Optimism", read: "ออพ-ทิ-มิซึม", th: "ความมองโลกในแง่ดี" },
+        { en: "Orderliness", read: "ออร์-เดอร์-ลี-เนส", th: "ความเป็นระเบียบ" },
+        {
+          en: "Originality",
+          read: "โอริจินัลลิ-ตี้",
+          th: "ความเป็นต้นฉบับ/ความคิดสร้างสรรค์",
+        },
+        {
+          en: "Outspokenness",
+          read: "เอาท์สโปคเคนเนส",
+          th: "การพูดตรงไปตรงมา",
+        },
+        {
+          en: "Overcomingness",
+          read: "โอเวอร์คัมมิงเนส",
+          th: "ความสามารถในการเอาชนะอุปสรรค",
+        },
+        {
+          en: "Passionateness",
+          read: "แพช-ชัน-เนส",
+          th: "ความกระตือรือร้น/ความหลงใหล",
+        },
+        {
+          en: "Perceptiveness",
+          read: "เพอร์เซพทีฟเนส",
+          th: "ความสามารถในการรับรู้สิ่งต่างๆอย่างรวดเร็วและถูกต้อง",
+        },
+        {
+          en: "Perseverance",
+          read: "เพอร์ซิวิ-แรนซ์",
+          th: "ความพยายามอย่างต่อเนื่องแม้จะเผชิญกับอุปสรรค",
+        },
+        {
+          en: "Persistence",
+          read: "เพอร์ซิส-เทนซ์",
+          th: "ความพยายามอย่างต่อเนื่อง",
+        },
+        {
+          en: "Perspicacity",
+          read: "เพอร์ส-พิ-คา-ซิ-ที",
+          th: "ความเฉียบแหลม/ความสามารถในการเข้าใจสิ่งต่างๆอย่างรวดเร็วและถูกต้อง",
+        },
+        {
+          en: "Philanthropy",
+          read: "ฟิ-แลน-โธ-รพี",
+          th: "การกุศล/ความรักมนุษย์",
+        },
+        {
+          en: "Piety",
+          read: "ไพ-อะ-ที",
+          th: "ความศรัทธา/ความเคารพต่อสิ่งศักดิ์สิทธิ์หรือผู้ใหญ่",
+        },
+        {
+          en: "Playfulness",
+          read: "เพลย์-ฟูล-เนส",
+          th: "ความสนุกสนาน/ความขี้เล่น",
+        },
+        { en: "Poise", read: "พอยส์", th: "ความสง่างาม/การควบคุมตัวเองได้ดี" },
+        { en: "Politeness", read: "โพลิท-เนส", th: "ความสุภาพ" },
+        {
+          en: "Practicality",
+          read: "แปรค-ทิค-คัล-ลิ-ตี้",
+          th: "ความเป็นประโยชน์/การใช้ได้จริง",
+        },
+        { en: "Precision", read: "พรีซีชัน", th: "ความแม่นยำ" },
+        { en: "Preparedness", read: "พรีแพร์ดเนส", th: "ความพร้อม" },
+        { en: "Presence", read: "เพรสเซนซ์", th: "การปรากฏตัว/การมีอยู่" },
+        {
+          en: "Proactivity",
+          read: "โพรแอคทีวิ-ที",
+          th: "การมีปฏิกิริยาเชิงรุก/การดำเนินการก่อนที่จะเกิดปัญหา",
+        },
+        {
+          en: "Professionalism",
+          read: "โปรเฟสชันนัลลิซึม",
+          th: "ความเป็นมืออาชีพ",
+        },
+        {
+          en: "Progressiveness",
+          read: "โพร-เกรส-ซิฟ-เนส",
+          th: "ความก้าวหน้า/ความทันสมัย",
+        },
+        {
+          en: "Prolificness",
+          read: "โปร-ลิฟ-ฟิค-เนส",
+          th: "ความอุดมสมบูรณ์/การผลิตผลงานมากมาย",
+        },
+        { en: "Prominence", read: "พรอม-นินซ์", th: "ความโดดเด่น/ความสำคัญ" },
+        { en: "Prosperity", read: "พรอส-เพอ-ริ-ที", th: "ความเจริญรุ่งเรือง" },
+        {
+          en: "Prudence",
+          read: "พรู-เดนซ์",
+          th: "ความรอบคอบ/การมีวิจารณญาณดี",
+        },
+        { en: "Punctuality", read: "พังค์-ชวล-ลิ-ตี้", th: "ความตรงต่อเวลา" },
+        {
+          en: "Purposefulness",
+          read: "เพอร์-โพส-ฟูล-เนส",
+          th: "ความมุ่งมั่น/การมีเป้าหมายที่ชัดเจน",
+        },
+        { en: "Rationality", read: "แรช-นะ-ลิ-ที", th: "ความมีเหตุผล" },
+        {
+          en: "Receptiveness",
+          read: "รีเซพทีฟเนส",
+          th: "ความสามารถในการรับรู้สิ่งต่างๆอย่างรวดเร็วและถูกต้อง",
+        },
+        {
+          en: "Reciprocity",
+          read: "รีซิพโรซิตี้",
+          th: "การตอบแทน/การให้และรับอย่างสมดุล",
+        },
+        {
+          en: "Refinement",
+          read: "รีไฟน์เมนท์",
+          th: "ความประณีต/การปรับปรุงให้ดีขึ้น",
+        },
+        { en: "Reflection", read: "รีเฟล็กชัน", th: "การสะท้อน/การไตร่ตรอง" },
+        {
+          en: "Resilience",
+          read: "รีซิล-เยินซ์",
+          th: "ความยืดหยุ่น/ความสามารถในการฟื้นตัวจากสถานการณ์ที่ยากลำบาก",
+        },
+        {
+          en: "Resourcefulness",
+          read: "รี-ซอร์ส-ฟูล-เนส",
+          th: "ความสามารถในการแก้ปัญหา/ความมีไหวพริบ",
+        },
+        { en: "Respectfulness", read: "รี-สเปค-ทฟูล-เนส", th: "ความเคารพ" },
+        {
+          en: "Responsibility",
+          read: "รี-สปอน-ซิ-บิล-ลิ-ตี้",
+          th: "ความรับผิดชอบ",
+        },
+        {
+          en: "Responsiveness",
+          read: "รี-สปอน-ซีฟ-เนส",
+          th: "ความสามารถในการตอบสนองอย่างรวดเร็วและเหมาะสม",
+        },
+        {
+          en: "Reverence",
+          read: "เรเวอเรนซ์",
+          th: "ความเคารพอย่างสูง/ความศรัทธา",
+        },
+        { en: "Rigor", read: "ริกเกอร์", th: "ความเข้มงวด/ความเคร่งครัด" },
+        {
+          en: "Sagacity",
+          read: "ซา-กา-ซิ-ที",
+          th: "ความเฉลียวฉลาด/การมีวิจารณญาณดี",
+        },
+        {
+          en: "Sanguineness",
+          read: "แซงกวินเนส",
+          th: "ความมั่นใจ/การมองโลกในแง่ดีแม้ในสถานการณ์ที่ยากลำบาก",
+        },
+        { en: "Satisfaction", read: "แซทิสแฟคชัน", th: "ความพึงพอใจ" },
+        {
+          en: "Self-awareness",
+          read: "เซลฟ์อะแวร์เนส",
+          th: "การตระหนักรู้ในตัวเอง",
+        },
+        { en: "Self-control", read: "เซลฟ์คอนโทรล", th: "การควบคุมตัวเอง" },
+        { en: "Self-discipline", read: "เซลฟ์ดิสซิพลิน", th: "วินัยในตัวเอง" },
+        { en: "Self-esteem", read: "เซลฟ์เอสตีม", th: "ความนับถือตนเอง" },
+        {
+          en: "Self-improvement",
+          read: "เซลฟ์อิมพรูฟ-เมนท์",
+          th: "การพัฒนาตนเอง",
+        },
+        {
+          en: "Self-reliance",
+          read: "เซลฟ์รี-ไล-แอนซ์",
+          th: "ความพึ่งพาตนเอง",
+        },
+        {
+          en: "Sensitivity",
+          read: "เซ็น-ซิ-ทิ-วิ-ที",
+          th: "ความอ่อนไหว/ความสามารถในการรับรู้และตอบสนองต่อความรู้สึกของผู้อื่น",
+        },
+        { en: "Serenity", read: "เซเรนิตี้", th: "ความสงบสุข" },
+        { en: "Sincerity", read: "ซิน-เซอ-ริ-ที", th: "ความจริงใจ" },
+        {
+          en: "Sociability",
+          read: "โซ-เชีย-บิล-ลิ-ตี้",
+          th: "ความเป็นมิตร/ความสามารถในการเข้าสังคม",
+        },
+        {
+          en: "Solidarity",
+          read: "โซลิดา-ริ-ที",
+          th: "ความเป็นน้ำหนึ่งใจเดียวกัน/การสนับสนุนซึ่งกันและกัน",
+        },
+        {
+          en: "Sophistication",
+          read: "โซฟิสทิเกชัน",
+          th: "ความซับซ้อน/ความมีรสนิยมสูง",
+        },
+        {
+          en: "Spontaneity",
+          read: "สปอนเทนี-อะบิล-ลิ-ตี้",
+          th: "ความเป็นธรรมชาติ/การทำสิ่งต่างๆโดยไม่วางแผนล่วงหน้า",
+        },
+        { en: "Stability", read: "สเตบิลิตี้", th: "ความมั่นคง/ความเสถียร" },
+        { en: "Strength", read: "สเตร็งธ์", th: "ความแข็งแรง/จุดแข็ง" },
+        {
+          en: "Subtlety",
+          read: "ซับเทิลตี้",
+          th: "ความละเอียดอ่อน/ความมีเลศนัย",
+        },
+        {
+          en: "Supportiveness",
+          read: "ซัพพอร์ททีฟเนส",
+          th: "การให้การสนับสนุน/การช่วยเหลือผู้อื่น",
+        },
+        {
+          en: "Surprisefulness",
+          read: "เซอร์-ไพรส์-ฟูล-เนส",
+          th: "ความสามารถในการสร้างความประหลาดใจ/ความไม่คาดคิด",
+        },
+        {
+          en: "Sustainability",
+          read: "ซัส-เทน-อะ-บิล-ลิ-ตี้",
+          th: "ความยั่งยืน",
+        },
+        { en: "Sympathy", read: "ซิมพะ-ธี", th: "ความเห็นอกเห็นใจ" },
+        {
+          en: "Synergy",
+          read: "ซิน-เนอร์-จี",
+          th: "การทำงานร่วมกันอย่างมีประสิทธิภาพ",
+        },
+        {
+          en: "Systematicity",
+          read: "ซิส-เทม-แอท-ติ-คัล-ลิ-ตี้",
+          th: "ความเป็นระบบ/การจัดระเบียบอย่างมีประสิทธิภาพ",
+        },
+        {
+          en: "Tactfulness",
+          read: "แทค-ทฟูล-เนส",
+          th: "ความมีไหวพริบทางสังคม/การพูดหรือทำสิ่งต่างๆอย่างระมัดระวังเพื่อไม่ให้ผู้อื่นรู้สึกไม่ดี",
+        },
+        { en: "Talent", read: "แทล-เลนต์", th: "พรสวรรค์/ความสามารถพิเศษ" },
+        { en: "Teamwork", read: "ทีม-เวิร์ค", th: "การทำงานเป็นทีม" },
+        {
+          en: "Temperance",
+          read: "เท็ม-เพอ-รันซ์",
+          th: "ความมีเหตุผล/การควบคุมตนเอง",
+        },
+        {
+          en: "Tenacity",
+          read: "เท-นา-ซิ-ที",
+          th: "ความดื้อรั้น/ความสามารถในการยึดมั่นในเป้าหมายแม้จะเผชิญกับอุปสรรค",
+        },
+        {
+          en: "Thoroughness",
+          read: "ธอ-โร-เนส",
+          th: "ความละเอียดถี่ถ้วน/การทำสิ่งต่างๆอย่างครบถ้วนและสมบูรณ์",
+        },
+        {
+          en: "Thoughtfulness",
+          read: "ธอท-ฟูล-เนส",
+          th: "ความเอาใจใส่/การคิดถึงผู้อื่น",
+        },
+        {
+          en: "Tolerance",
+          read: "ทอล-เลอ-รันซ์",
+          th: "ความอดทน/การยอมรับความแตกต่างของผู้อื่น",
+        },
+        { en: "Tranquility", read: "แทรงควิลิตี้", th: "ความสงบสุข" },
+        {
+          en: "Trustworthiness",
+          read: "ทรัสต์เวิร์ธ-เนส",
+          th: "ความน่าเชื่อถือ/ความไว้วางใจได้",
+        },
+        {
+          en: "Truthfulness",
+          read: "ทรูธฟูลเนส",
+          th: "ความจริงใจ/การพูดหรือทำสิ่งต่างๆอย่างตรงไปตรงมาและซื่อสัตย์",
+        },
+        {
+          en: "Understandingness",
+          read: "อันเดอร์สแตนดิ้งเนส",
+          th: "ความเข้าใจ/การมีความเห็นอกเห็นใจ",
+        },
+        {
+          en: "Uniqueness",
+          read: "ยู-นีค-เนส",
+          th: "ความเป็นเอกลักษณ์/ความโดดเด่น",
+        },
+        {
+          en: "Unselfishness",
+          read: "อันเซลฟ์-นิส-เนส",
+          th: "ความไม่เห็นแก่ตัว/การให้โดยไม่หวังผลตอบแทน",
+        },
+        {
+          en: "Versatility",
+          read: "เวอร์-ซะ-ทิล-ลิ-ตี้",
+          th: "ความสามารถในการทำงานหรือปรับตัวได้หลากหลาย",
+        },
+        {
+          en: "Vibrancy",
+          read: "ไวย์-บรันซ์",
+          th: "ความมีชีวิตชีวา/ความกระตือรือร้น",
+        },
+        {
+          en: "Vigilance",
+          read: "วิ-จิ-แลนซ์",
+          th: "ความระมัดระวัง/การเฝ้าระวัง",
+        },
+        { en: "Virtue", read: "เวอร์ชู", th: "คุณธรรม/ความดี" },
+        {
+          en: "Visionaryness",
+          read: "วิ-ชัน-นา-รีเนส",
+          th: "ความมีวิสัยทัศน์/การมองเห็นภาพรวมและอนาคตอย่างชัดเจน",
+        },
+        {
+          en: "Vitality",
+          read: "ไว-ทัล-ลิ-ตี้",
+          th: "ความมีชีวิตชีวา/พลังงาน",
+        },
+        { en: "Warmth", read: "วอร์มธ์", th: "ความอบอุ่น/ความเป็นมิตร" },
+        {
+          en: "Wisdom",
+          read: "วิซ-ดอม",
+          th: "ปัญญา/ความรู้ที่ได้จากประสบการณ์และการเรียนรู้",
+        },
+        {
+          en: "Wittiness",
+          read: "วิท-ทีเนส",
+          th: "ความเฉลียวฉลาด/อารมณ์ขันที่แฝงด้วยปัญญา",
+        },
+        {
+          en: "Wonderfulness",
+          read: "วัน-เดอร์-ฟูล-เนส",
+          th: "ความมหัศจรรย์/ความน่าทึ่ง",
+        },
+        {
+          en: "Youthfulness",
+          read: "ยูธ-ฟูล-เนส",
+          th: "ความเป็นหนุ่มสาว/ความมีชีวิตชีวา",
+        },
+        {
+          en: "Zeal",
+          read: "ซีล",
+          th: "ความกระตือรือร้น/ความมุ่งมั่นอย่างแรงกล้า",
+        },
+        {
+          en: "Zealousness",
+          read: "ซี-ลัส-เนส",
+          th: "ความกระตือรือร้น/ความมุ่งมั่นอย่างแรงกล้า",
+        },
+        {
+          en: "Zestfulness",
+          read: "เซส-ทฟูล-เนส",
+          th: "ความกระตือรือร้น/ความสนุกสนาน",
+        },
+        {
+          en: "Zinginess",
+          read: "ซิง-กิ-เนส",
+          th: "ความมีชีวิตชีวา/ความกระตือรือร้น",
+        },
+        {
+          en: "Zippiness",
+          read: "ซิป-พี-เนส",
+          th: "ความมีชีวิตชีวา/ความกระตือรือร้น",
+        },
+        { en: "Always", read: "ออล-เวย์ส", th: "เสมอ" },
+        { en: "Apple", read: "แอพ-เพิล", th: "แอปเปิ้ล" },
+        { en: "Animal", read: "แอน-นิ-มอล", th: "สัตว์" },
+        { en: "Baby", read: "เบ-บี้", th: "เด็กทารก" },
+        { en: "Back", read: "แบค", th: "หลัง/กลับ" },
+        { en: "Bad", read: "แบด", th: "เลว/แย่" },
+        { en: "Bag", read: "แบก", th: "กระเป๋า" },
+        { en: "Ball", read: "บอล", th: "ลูกบอล" },
+        { en: "Banana", read: "บะ-แนน-นะ", th: "กล้วย" },
+        { en: "Bath", read: "บาธ", th: "อาบน้ำ" },
+        { en: "Beach", read: "บีช", th: "ชายหาด" },
+        { en: "Bed", read: "เบด", th: "เตียงนอน" },
+        { en: "Big", read: "บิก", th: "ใหญ่" },
+        { en: "Bird", read: "เบิร์ด", th: "นก" },
+        { en: "Black", read: "แบล็ค", th: "สีดำ" },
+        { en: "Blue", read: "บลู", th: "สีน้ำเงิน" },
+        { en: "Boat", read: "โบท", th: "เรือ" },
+        { en: "Body", read: "บอด-ดี้", th: "ร่างกาย" },
+        { en: "Book", read: "บุค", th: "หนังสือ" },
+        { en: "Box", read: "บ็อกซ์", th: "กล่อง" },
+        { en: "Boy", read: "บอย", th: "เด็กชาย" },
+        { en: "Bread", read: "เบรด", th: "ขนมปัง" },
+        { en: "Brother", read: "บรา-เธอร์", th: "พี่ชาย/น้องชาย" },
+        { en: "Bus", read: "บัส", th: "รถเมล์" },
+        { en: "Cake", read: "เค้ก", th: "ขนมเค้ก" },
+        { en: "Call", read: "คอล", th: "เรียก/โทร" },
+        { en: "Candy", read: "แคน-ดี้", th: "ลูกอม" },
+        { en: "Car", read: "คาร์", th: "รถยนต์" },
+        { en: "Cat", read: "แคท", th: "แมว" },
+        { en: "Chair", read: "แชร์", th: "เก้าอี้" },
+        { en: "Child", read: "ไชลด์", th: "เด็ก" },
+        { en: "City", read: "ซิท-ตี้", th: "เมือง" },
+        { en: "Clean", read: "คลีน", th: "สะอาด" },
+        { en: "Close", read: "โคลส", th: "ปิด" },
+        { en: "Coffee", read: "คอฟ-ฟี่", th: "กาแฟ" },
+        { en: "Cold", read: "โคลด์", th: "หนาว" },
+        { en: "Color", read: "คัล-เลอร์", th: "สี" },
+        { en: "Come", read: "คัม", th: "มา" },
+        { en: "Cook", read: "คุค", th: "ปรุงอาหาร" },
+        { en: "Cup", read: "คัพ", th: "ถ้วย" },
+        { en: "Dance", read: "แดนซ์", th: "เต้น" },
+        { en: "Day", read: "เดย์", th: "วัน" },
+        { en: "Dog", read: "ด็อก", th: "สุนัข" },
+        { en: "Door", read: "ดอร์", th: "ประตู" },
+        { en: "Drink", read: "ดริงก์", th: "ดื่ม" },
+        { en: "Eat", read: "อีท", th: "กิน" },
+        { en: "Egg", read: "เอ็ก", th: "ไข่" },
+        { en: "Eye", read: "อาย", th: "ตา" },
+        { en: "Face", read: "เฟซ", th: "ใบหน้า" },
+        { en: "Family", read: "แฟม-มิ-ลี่", th: "ครอบครัว" },
+        { en: "Father", read: "ฟา-เธอร์", th: "พ่อ" },
+        { en: "Fish", read: "ฟิช", th: "ปลา" },
+        { en: "Flower", read: "ฟลาว-เวอร์", th: "ดอกไม้" },
+        { en: "Food", read: "ฟู้ด", th: "อาหาร" },
+        { en: "Foot", read: "ฟุต", th: "เท้า" },
+        { en: "Friend", read: "เฟรนด์", th: "เพื่อน" },
+        { en: "Fruit", read: "ฟรุต", th: "ผลไม้" },
+        { en: "Game", read: "เกม", th: "เกม" },
+        { en: "Girl", read: "เกิร์ล", th: "เด็กหญิง" },
+        { en: "Go", read: "โก", th: "ไป" },
+        { en: "Good", read: "กู้ด", th: "ดี" },
+        { en: "Green", read: "กรีน", th: "สีเขียว" },
+        { en: "Hair", read: "แฮร์", th: "ผม" },
+        { en: "Hand", read: "แฮนด์", th: "มือ" },
+        { en: "Happy", read: "แฮพ-พี้", th: "มีความสุข" },
+        { en: "Hat", read: "แฮท", th: "หมวก" },
+        { en: "Head", read: "เฮด", th: "หัว" },
+        { en: "Hear", read: "เฮียร์", th: "ได้ยิน" },
+        { en: "Hello", read: "เฮล-โล", th: "สวัสดี" },
+        { en: "Help", read: "เฮลป์", th: "ช่วย" },
+        { en: "Home", read: "โฮม", th: "บ้าน" },
+        { en: "Hot", read: "ฮอท", th: "ร้อน" },
+        { en: "House", read: "เฮาส์", th: "บ้าน/เรือน" },
+        { en: "Ice", read: "ไอซ์", th: "น้ำแข็ง" },
+        { en: "Jump", read: "จัมป์", th: "กระโดด" },
+        { en: "Key", read: "คีย์", th: "กุญแจ" },
+        { en: "Life", read: "ไลฟ์", th: "ชีวิต" },
+        { en: "Love", read: "เลิฟ", th: "รัก" },
+        { en: "Milk", read: "มิลค์", th: "นม" },
+        { en: "Money", read: "มัน-นี่", th: "เงิน" },
+        { en: "Mother", read: "มา-เธอร์", th: "แม่" },
+        { en: "Mouth", read: "เมาธ์", th: "ปาก" },
+        { en: "Name", read: "เนม", th: "ชื่อ" },
+        { en: "New", read: "นิว", th: "ใหม่" },
+        { en: "Night", read: "ไนท์", th: "กลางคืน" },
+        { en: "No", read: "โน", th: "ไม่" },
+        { en: "Open", read: "โอ-เพ่น", th: "เปิด" },
+        { en: "Paper", read: "เพ-เพอร์", th: "กระดาษ" },
+        { en: "Pen", read: "เพน", th: "ปากกา" },
+        { en: "Play", read: "เพลย์", th: "เล่น" },
+        { en: "Rain", read: "เรน", th: "ฝน" },
+        { en: "Read", read: "รีด", th: "อ่าน" },
+        { en: "Red", read: "เรด", th: "สีแดง" },
+        { en: "Rice", read: "ไรซ์", th: "ข้าว" },
+        { en: "Run", read: "รัน", th: "วิ่ง" },
+        { en: "School", read: "สคูล", th: "โรงเรียน" },
+        { en: "Sleep", read: "สลีพ", th: "นอน" },
+        { en: "Small", read: "สมอล", th: "เล็ก" },
+        { en: "Sun", read: "ซัน", th: "พระอาทิตย์" },
+        { en: "Water", read: "วอ-เทอร์", th: "น้ำ" },
+        { en: "Table", read: "เท-เบิล", th: "โต๊ะ" },
+        { en: "Window", read: "วิน-โดว", th: "หน้าต่าง" },
+        { en: "Kitchen", read: "คิท-เช่น", th: "ห้องครัว" },
+        { en: "Bicycle", read: "ไบ-ซิ-เคิล", th: "จักรยาน" },
+        { en: "Computer", read: "คอม-พิว-เทอร์", th: "คอมพิวเตอร์" },
+        { en: "Doctor", read: "ด็อค-เทอร์", th: "หมอ" },
+        { en: "Teacher", read: "ทีช-เชอร์", th: "ครู" },
+        { en: "Student", read: "สติว-เดนท์", th: "นักเรียน" },
+        { en: "Shirt", read: "เชิ้ต", th: "เสื้อเชิ้ต" },
+        { en: "Shoes", read: "ชูส์", th: "รองเท้า" },
+        { en: "Pencil", read: "เพน-ซิล", th: "ดินสอ" },
+        { en: "Letter", read: "เลท-เทอร์", th: "จดหมาย" },
+        { en: "Moon", read: "มูน", th: "พระจันทร์" },
+        { en: "Star", read: "สตาร์", th: "ดาว" },
+        { en: "Sky", read: "สกาย", th: "ท้องฟ้า" },
+        { en: "Cloud", read: "คลาวด์", th: "เมฆ" },
+        { en: "River", read: "ริ-เวอ", th: "แม่น้ำ" },
+        { en: "Mountain", read: "เมาน์-เทน", th: "ภูเขา" },
+        { en: "Tree", read: "ทรี", th: "ต้นไม้" },
+        { en: "Grass", read: "กราส", th: "หญ้า" },
+        { en: "Bird", read: "เบิร์ด", th: "นก" },
+        { en: "Horse", read: "ฮอร์ส", th: "ม้า" },
+        { en: "Elephant", read: "เอล-เล-แฟนท์", th: "ช้าง" },
+        { en: "Pig", read: "พิก", th: "หมู" },
+        { en: "Chicken", read: "ชิค-เคน", th: "ไก่" },
+        { en: "Egg", read: "เอ็ก", th: "ไข่" },
+        { en: "Milk", read: "มิลค์", th: "นม" },
+        { en: "Coffee", read: "คอฟ-ฟี่", th: "กาแฟ" },
+        { en: "Sugar", read: "ชู-การ์", th: "น้ำตาล" },
+        { en: "Salt", read: "ซอลท์", th: "เกลือ" },
+        { en: "Pepper", read: "เพพ-เพอร์", th: "พริกไทย" },
+        { en: "Rice", read: "ไรซ์", th: "ข้าว" },
+        { en: "Noodle", read: "นู-เดิล", th: "ก๋วยเตี๋ยว" },
+        { en: "Spoon", read: "สปูน", th: "ช้อน" },
+        { en: "Fork", read: "ฟอร์ค", th: "ส้อม" },
+        { en: "Plate", read: "เพลท", th: "จาน" },
+        { en: "Bowl", read: "โบล", th: "ชาม" },
+        { en: "Glass", read: "กลาส", th: "แก้วน้ำ" },
+        { en: "Bottle", read: "บอท-เทิล", th: "ขวด" },
+        { en: "Phone", read: "โฟน", th: "โทรศัพท์" },
+        { en: "Money", read: "มัน-นี่", th: "เงิน" },
+        { en: "Wallet", read: "วอล-เล็ท", th: "กระเป๋าสตางค์" },
+        { en: "Clock", read: "คล็อค", th: "นาฬิกา" },
+        { en: "Watch", read: "วอทช์", th: "นาฬิกาข้อมือ" },
+        { en: "Key", read: "คีย์", th: "กุญแจ" },
+        { en: "Door", read: "ดอร์", th: "ประตู" },
+        { en: "Wall", read: "วอลล์", th: "ผนัง" },
+        { en: "Floor", read: "ฟลอร์", th: "พื้น" },
+        { en: "Roof", read: "รูฟ", th: "หลังคา" },
+        { en: "Mirror", read: "มิ-เรอร์", th: "กระจก" },
+        { en: "Soap", read: "โซป", th: "สบู่" },
+        { en: "Towel", read: "เทา-เวล", th: "ผ้าขนหนู" },
+        { en: "Comb", read: "โคมบ์", th: "หวี" },
+        { en: "Brush", read: "บรัช", th: "แปรง" },
+        { en: "Smile", read: "สไมล์", th: "ยิ้ม" },
+        { en: "Laugh", read: "ลาฟ", th: "หัวเราะ" },
+        { en: "Cry", read: "คราย", th: "ร้องไห้" },
+        { en: "Walk", read: "วอล์ค", th: "เดิน" },
+        { en: "Run", read: "รัน", th: "วิ่ง" },
+        { en: "Stop", read: "สต็อป", th: "หยุด" },
+        { en: "Wait", read: "เวท", th: "รอ" },
+        { en: "Look", read: "ลุค", th: "มอง" },
+        { en: "Watch", read: "วอทช์", th: "ดู" },
+        { en: "Read", read: "รีด", th: "อ่าน" },
+        { en: "Write", read: "ไรท์", th: "เขียน" },
+        { en: "Sing", read: "ซิง", th: "ร้องเพลง" },
+        { en: "Sleep", read: "สลีพ", th: "นอน" },
+        { en: "Wake", read: "เวค", th: "ตื่น" },
+        { en: "Sit", read: "สิท", th: "นั่ง" },
+        { en: "Stand", read: "สแตนด์", th: "ยืน" },
+        { en: "Open", read: "โอ-เพน", th: "เปิด" },
+        { en: "Close", read: "โคลส", th: "ปิด" },
+        { en: "Buy", read: "บาย", th: "ซื้อ" },
+        { en: "Sell", read: "เซล", th: "ขาย" },
+        { en: "Give", read: "กิฝ", th: "ให้" },
+        { en: "Take", read: "เทค", th: "เอามา/พาไป" },
+        { en: "Work", read: "เวิร์ค", th: "ทำงาน" },
+        { en: "Play", read: "เพลย์", th: "เล่น" },
+        { en: "Learn", read: "เลิร์น", th: "เรียน" },
+        { en: "Help", read: "เฮลป์", th: "ช่วย" },
+        { en: "Clean", read: "คลีน", th: "ทำความสะอาด" },
+        { en: "Wash", read: "วอช", th: "ล้าง/ซัก" },
+        { en: "Drive", read: "ไดรฟ์", th: "ขับรถ" },
+        { en: "Travel", read: "แทร-เวล", th: "ท่องเที่ยว" },
+        { en: "Today", read: "ทู-เดย์", th: "วันนี้" },
+        { en: "Tomorrow", read: "ทู-มอร์-โรว", th: "พรุ่งนี้" },
+        { en: "Morning", read: "มอร์-นิ่ง", th: "ตอนเช้า" },
+        { en: "Evening", read: "อีฟ-นิ่ง", th: "ตอนเย็น" },
+        { en: "Night", read: "ไนท์", th: "กลางคืน" },
+        { en: "Summer", read: "ซัม-เมอร์", th: "ฤดูร้อน" },
+        { en: "Winter", read: "วิน-เทอร์", th: "ฤดูหนาว" },
+        { en: "Rain", read: "เรน", th: "ฝน" },
+        { en: "Wind", read: "วินด์", th: "ลม" },
+        { en: "Fire", read: "ไฟ-เออร์", th: "ไฟ" },
+        { en: "Earth", read: "เอิร์ธ", th: "โลก/ดิน" },
+        { en: "Strong", read: "สตรอง", th: "แข็งแรง" },
+        { en: "Weak", read: "วีค", th: "อ่อนแอ" },
+        { en: "Hot", read: "ฮอท", th: "ร้อน" },
+        { en: "Cold", read: "โคลด์", th: "หนาว" },
+        { en: "Sweet", read: "สวีท", th: "หวาน" },
+        { en: "Happy", read: "แฮพ-พี้", th: "มีความสุข" },
+        { en: "Sad", read: "แซด", th: "เศร้า" },
+        { en: "Angry", read: "แอง-กรี้", th: "โกรธ" },
+        { en: "Sleepy", read: "สลีพ-พี้", th: "ง่วงนอน" },
+        { en: "Hungry", read: "ฮัง-กรี้", th: "หิว" },
+        { en: "Thirsty", read: "เธอร์ส-ตี้", th: "กระหายน้ำ" },
+        { en: "Tired", read: "ไท-เอิร์ด", th: "เหนื่อย" },
+        { en: "Excited", read: "อิก-ไซ-เท็ด", th: "ตื่นเต้น" },
+        { en: "Bored", read: "บอร์ด", th: "เบื่อ" },
+        { en: "Scared", read: "สแคร์ด", th: "กลัว" },
+        { en: "Worried", read: "เวอ-รี่ด", th: "กังวล" },
+        { en: "Surprised", read: "เซอร์-ไพร์สด", th: "ประหลาดใจ" },
+        { en: "Proud", read: "พราวด์", th: "ภูมิใจ" },
+        { en: "Lonely", read: "โลน-ลี่", th: "เหงา" },
+        { en: "Brave", read: "เบรฝ", th: "กล้าหาญ" },
+        { en: "Funny", read: "ฟัน-นี่", th: "ตลก" },
+        { en: "Kind", read: "ไคน์ด", th: "ใจดี" },
+        { en: "Lazy", read: "เล-ซี่", th: "ขี้เกียจ" },
+        { en: "Busy", read: "บิ-ซี่", th: "ยุ่ง" },
+        { en: "Quiet", read: "ไค-เอ็ท", th: "เงียบ" },
+        { en: "Loud", read: "เลาด์", th: "เสียงดัง" },
+        { en: "Soft", read: "ซอฟท์", th: "นุ่ม" },
+        { en: "Hard", read: "ฮาร์ด", th: "แข็ง/ยาก" },
+        { en: "Fast", read: "ฟาสต์", th: "เร็ว" },
+        { en: "Slow", read: "สโลว์", th: "ช้า" },
+        { en: "Heavy", read: "เฮฟ-วี่", th: "หนัก" },
+        { en: "Light", read: "ไลท์", th: "เบา/แสง" },
+        { en: "Dark", read: "ดาร์ก", th: "มืด" },
+        { en: "Bright", read: "ไบร์ท", th: "สว่าง" },
+        { en: "Rich", read: "ริช", th: "รวย" },
+        { en: "Poor", read: "พัวร์", th: "จน" },
+        { en: "Young", read: "ยัง", th: "หนุ่มสาว" },
+        { en: "Old", read: "โอลด์", th: "แก่/เก่า" },
+        { en: "Tall", read: "ทอลล์", th: "สูง" },
+        { en: "Short", read: "ชอร์ต", th: "เตี้ย/สั้น" },
+        { en: "Fat", read: "แฟต", th: "อ้วน" },
+        { en: "Thin", read: "ธิน", th: "ผอม" },
+        { en: "Beautiful", read: "บิว-ทิ-ฟูล", th: "สวย" },
+        { en: "Ugly", read: "อัก-ลี่", th: "น่าเกลียด" },
+        { en: "Clean", read: "คลีน", th: "สะอาด" },
+        { en: "Dirty", read: "เดอร์-ตี้", th: "สกปรก" },
+        { en: "Full", read: "ฟูล", th: "เต็ม/อิ่ม" },
+        { en: "Empty", read: "เอ็ม-ตี้", th: "ว่างเปล่า" },
+        { en: "True", read: "ทรู", th: "จริง" },
+        { en: "False", read: "ฟอลส์", th: "เท็จ" },
+        { en: "Easy", read: "อี-ซี่", th: "ง่าย" },
+        { en: "Difficult", read: "ดิฟ-ฟิ-คัลท์", th: "ยาก" },
+        { en: "Sweet", read: "สวีท", th: "หวาน" },
+        { en: "Sour", read: "ซาว-เออร์", th: "เปรี้ยว" },
+        { en: "Salty", read: "ซอล-ตี้", th: "เค็ม" },
+        { en: "Bitter", read: "บิท-เทอร์", th: "ขม" },
+        { en: "Spicy", read: "สไป-ซี่", th: "เผ็ด" },
+        { en: "Grandfather", read: "แกรนด์-ฟา-เธอร์", th: "ปู่/ตา" },
+        { en: "Grandmother", read: "แกรนด์-มา-เธอร์", th: "ย่า/ยาย" },
+        { en: "Uncle", read: "อัง-เคิล", th: "ลุง/น้า/อา (ชาย)" },
+        { en: "Aunt", read: "อานท์", th: "ป้า/น้า/อา (หญิง)" },
+        { en: "Cousin", read: "คัส-ซิน", th: "ลูกพี่ลูกน้อง" },
+        { en: "Son", read: "ซัน", th: "ลูกชาย" },
+        { en: "Daughter", read: "ดอ-เทอร์", th: "ลูกสาว" },
+        { en: "Nephew", read: "เน-ฟิว", th: "หลานชาย" },
+        { en: "Niece", read: "นีซ", th: "หลานสาว" },
+        { en: "Parents", read: "แพ-เร้นท์ส", th: "พ่อแม่" },
+        { en: "Children", read: "ชิล-เดร็น", th: "เด็กๆ" },
+        { en: "Husband", read: "ฮัส-แบนด์", th: "สามี" },
+        { en: "Wife", read: "ไวฟ์", th: "ภรรยา" },
+        { en: "Neighbor", read: "เน-เบอร์", th: "เพื่อนบ้าน" },
+        { en: "Person", read: "เพอร์-ซัน", th: "บุคคล" },
+        { en: "People", read: "พี-เพิล", th: "ประชาชน" },
+        { en: "Monday", read: "มัน-เดย์", th: "วันจันทร์" },
+        { en: "Tuesday", read: "ทิวส์-เดย์", th: "วันอังคาร" },
+        { en: "Wednesday", read: "เวนส์-เดย์", th: "วันพุธ" },
+        { en: "Thursday", read: "เธอร์ส-เดย์", th: "วันพฤหัสบดี" },
+        { en: "Friday", read: "ฟราย-เดย์", th: "วันศุกร์" },
+        { en: "Saturday", read: "แซท-เทอร์-เดย์", th: "วันเสาร์" },
+        { en: "Sunday", read: "ซัน-เดย์", th: "วันอาทิตย์" },
+        { en: "January", read: "แจน-ยู-อะ-รี", th: "มกราคม" },
+        { en: "February", read: "เฟบ-รู-อะ-รี", th: "กุมภาพันธ์" },
+        { en: "March", read: "มาร์ช", th: "มีนาคม" },
+        { en: "April", read: "เอ-พริล", th: "เมษายน" },
+        { en: "May", read: "เมย์", th: "พฤษภาคม" },
+        { en: "June", read: "จูน", th: "มิถุนายน" },
+        { en: "July", read: "จู-ลาย", th: "กรกฎาคม" },
+        { en: "August", read: "ออ-กัสต์", th: "สิงหาคม" },
+        { en: "September", read: "เซพ-เทม-เบอร์", th: "กันยายน" },
+        { en: "October", read: "อ็อก-โท-เบอร์", th: "ตุลาคม" },
+        { en: "November", read: "โน-เวม-เบอร์", th: "พฤศจิกายน" },
+        { en: "December", read: "ดี-เซม-เบอร์", th: "ธันวาคม" },
+        { en: "Spring", read: "สปริง", th: "ฤดูใบไม้ผลิ" },
+        { en: "Autumn", read: "ออ-ทัม", th: "ฤดูใบไม้ร่วง" },
+        { en: "Holiday", read: "ฮอ-ลิ-เดย์", th: "วันหยุด" },
+        { en: "Weekend", read: "วีก-เอนด์", th: "วันหยุดสุดสัปดาห์" },
+        { en: "Hour", read: "เอา-เออร์", th: "ชั่วโมง" },
+        { en: "Minute", read: "มิ-นิท", th: "นาที" },
+        { en: "Second", read: "เซ-เคิ่น", th: "วินาที" },
+        { en: "Now", read: "นาว", th: "ตอนนี้" },
+        { en: "Early", read: "เออร์-ลี่", th: "เช้า/ก่อนเวลา" },
+        { en: "Late", read: "เลท", th: "สาย/ช้า" },
+        { en: "Ready", read: "เร-ดี้", th: "พร้อม" },
+        { en: "Safe", read: "เซฟ", th: "ปลอดภัย" },
+        { en: "Famous", read: "เฟ-มัส", th: "มีชื่อเสียง" },
+        { en: "Engineer", read: "เอน-จิ-เนียร์", th: "วิศวกร" },
+        { en: "Nurse", read: "เนิร์ส", th: "พยาบาล" },
+        { en: "Artist", read: "อาร์-ทิสต์", th: "ศิลปิน" },
+        { en: "Dentist", read: "เด็น-ทิสต์", th: "ทันตแพทย์" },
+        { en: "Driver", read: "ไดร-เวอร์", th: "คนขับรถ" },
+        { en: "Farmer", read: "ฟาร์ม-เมอร์", th: "ชาวนา/เกษตรกร" },
+        { en: "Fisherman", read: "ฟิช-เชอร์-แมน", th: "ชาวประมง" },
+        { en: "Chef", read: "เชฟ", th: "พ่อครัว" },
+        { en: "Soldier", read: "โซล-เจอร์", th: "ทหาร" },
+        { en: "Police", read: "พะ-ลิส", th: "ตำรวจ" },
+        { en: "Pilot", read: "ไพ-ลอท", th: "นักบิน" },
+        { en: "Singer", read: "ซิง-เงอร์", th: "นักร้อง" },
+        { en: "Actor", read: "แอค-เทอร์", th: "นักแสดงชาย" },
+        { en: "Actress", read: "แอค-เทรส", th: "นักแสดงหญิง" },
+        { en: "Writer", read: "ไร-เทอร์", th: "นักเขียน" },
+        { en: "Lawyer", read: "ลอ-เยอร์", th: "ทนายความ" },
+        { en: "Secretary", read: "เซค-คระ-แท-รี่", th: "เลขานุการ" },
+        { en: "Manager", read: "แม-เน-เจอร์", th: "ผู้จัดการ" },
+        { en: "Shop", read: "ช็อป", th: "ร้านค้า" },
+        { en: "Market", read: "มาร์-เก็ต", th: "ตลาด" },
+        { en: "Hospital", read: "ฮอส-พิ-ทอล", th: "โรงพยาบาล" },
+        { en: "Station", read: "สเต-ชั่น", th: "สถานี" },
+        { en: "Bank", read: "แบงก์", th: "ธนาคาร" },
+        { en: "Library", read: "ไล-บระ-รี่", th: "ห้องสมุด" },
+        { en: "Cinema", read: "ซิ-เน-ม่า", th: "โรงภาพยนตร์" },
+        { en: "Airport", read: "แอร์-พอร์ต", th: "สนามบิน" },
+        { en: "Park", read: "พาร์ค", th: "สวนสาธารณะ" },
+        { en: "Bridge", read: "บริดจ์", th: "สะพาน" },
+        { en: "Building", read: "บิล-ดิ้ง", th: "ตึก/อาคาร" },
+        { en: "Factory", read: "แฟค-ทอ-รี่", th: "โรงงาน" },
+        { en: "Farm", read: "ฟาร์ม", th: "ไร่นา" },
+        { en: "Forest", read: "ฟอ-เรสต์", th: "ป่า" },
+        { en: "Garden", read: "การ์-เด็น", th: "สวน" },
+        { en: "Mountain", read: "เมาน์-เทน", th: "ภูเขา" },
+        { en: "Island", read: "ไอ-แลนด์", th: "เกาะ" },
+        { en: "Beach", read: "บีช", th: "ชายหาด" },
+        { en: "Ocean", read: "โอ-เชี่ยน", th: "มหาสมุทร" },
+        { en: "Lake", read: "เลค", th: "ทะเลสาบ" },
+        { en: "Road", read: "โร้ด", th: "ถนน" },
+        { en: "Street", read: "สตรีท", th: "ถนน/ซอย" },
+        { en: "Path", read: "พาท", th: "ทางเดิน" },
+        { en: "Village", read: "วิล-เลจ", th: "หมู่บ้าน" },
+        { en: "Country", read: "คัน-ทรี", th: "ประเทศ" },
+        { en: "World", read: "เวิลด์", th: "โลก" },
+        { en: "Airplane", read: "แอร์-เพลน", th: "เครื่องบิน" },
+        { en: "Helicopter", read: "เฮ-ลิ-คอป-เทอร์", th: "เฮลิคอปเตอร์" },
+        { en: "Train", read: "เทรน", th: "รถไฟ" },
+        { en: "Boat", read: "โบท", th: "เรือ" },
+        { en: "Ship", read: "ชิพ", th: "เรือขนาดใหญ่" },
+        { en: "Truck", read: "ทรัค", th: "รถบรรทุก" },
+        { en: "Van", read: "แวน", th: "รถตู้" },
+        { en: "Motorcycle", read: "มอ-เทอร์-ไซ-เคิล", th: "รถจักรยานยนต์" },
+        { en: "Bicycle", read: "ไบ-ซิ-เคิล", th: "รถจักรยาน" },
+        { en: "Taxi", read: "แทก-ซี่", th: "แท็กซี่" },
+        { en: "Bus", read: "บัส", th: "รถประจำทาง" },
+        { en: "Subway", read: "ซับ-เวย์", th: "รถไฟใต้ดิน" },
+        { en: "Ticket", read: "ทิค-เก็ต", th: "ตั๋ว" },
+        { en: "Passenger", read: "แพส-เซ็น-เจอร์", th: "ผู้โดยสาร" },
+        { en: "Travel", read: "แทร-เวล", th: "เดินทาง" },
+        { en: "Journey", read: "เจอร์-นี่", th: "การเดินทาง" },
+        { en: "Map", read: "แมพ", th: "แผนที่" },
+        { en: "Tourist", read: "ทัวร์-ริสต์", th: "นักท่องเที่ยว" },
+        { en: "Hotel", read: "โฮ-เทล", th: "โรงแรม" },
+        { en: "Passport", read: "พาส-พอร์ต", th: "หนังสือเดินทาง" },
+        { en: "Sunny", read: "ซัน-นี่", th: "แดดจัด" },
+        { en: "Rainy", read: "เรน-นี่", th: "ฝนตก" },
+        { en: "Cloudy", read: "เคลา-ดี้", th: "เมฆมาก" },
+        { en: "Windy", read: "วิน-ดี้", th: "ลมแรง" },
+        { en: "Snowy", read: "สโน-วี่", th: "หิมะตก" },
+        { en: "Stormy", read: "สตอร์-มี่", th: "พายุ" },
+        { en: "Foggy", read: "ฟ็อก-กี้", th: "หมอกจัด" },
+        { en: "Hot", read: "ฮอท", th: "ร้อน" },
+        { en: "Cold", read: "โคลด์", th: "หนาว" },
+        { en: "Warm", read: "วอร์ม", th: "อบอุ่น" },
+        { en: "Cool", read: "คูล", th: "เย็นสบาย" },
+        { en: "Dry", read: "ไดร", th: "แห้ง" },
+        { en: "Wet", read: "เว็ท", th: "เปียก" },
+        { en: "Freeze", read: "ฟรีซ", th: "เยือกแข็ง" },
+        { en: "Rainbow", read: "เรน-โบว์", th: "รุ้งกินน้ำ" },
+        { en: "Lightning", read: "ไลท์-นิ่ง", th: "ฟ้าแลบ" },
+        { en: "Thunder", read: "ธัน-เดอร์", th: "ฟ้าร้อง" },
+        { en: "Season", read: "ซี-ซั่น", th: "ฤดูกาล" },
+        { en: "Weather", read: "เว-เธอร์", th: "สภาพอากาศ" },
+        { en: "Temperature", read: "เทม-พะ-ระ-เชอร์", th: "อุณหภูมิ" },
+        { en: "Sky", read: "สกาย", th: "ท้องฟ้า" },
+        { en: "North", read: "นอร์ธ", th: "ทิศเหนือ" },
+        { en: "South", read: "เซาธ์", th: "ทิศใต้" },
+        { en: "East", read: "อีสต์", th: "ทิศตะวันออก" },
+        { en: "West", read: "เวสต์", th: "ทิศตะวันตก" },
+        { en: "Left", read: "เลฟต์", th: "ซ้าย" },
+        { en: "Right", read: "ไรต์", th: "ขวา" },
+        { en: "Straight", read: "สเตรท", th: "ตรงไป" },
+        { en: "Behind", read: "บี-ไฮน์", th: "ข้างหลัง" },
+        { en: "In front of", read: "อิน-ฟรอนท์-ออฟ", th: "ข้างหน้า" },
+        { en: "Between", read: "บี-ทวีน", th: "ระหว่าง" },
+        { en: "Across", read: "อะ-ครอส", th: "ข้าม" },
+        { en: "Under", read: "อัน-เดอร์", th: "ข้างใต้" },
+        { en: "Above", read: "อะ-บัฝ", th: "ข้างบน" },
+        { en: "Around", read: "อะ-ราวนด์", th: "รอบๆ" },
+        { en: "Exit", read: "เอ็ก-ซิท", th: "ทางออก" },
+        { en: "Breakfast", read: "เบรค-ฟาสต์", th: "อาหารเช้า" },
+        { en: "Lunch", read: "ลันช์", th: "อาหารกลางวัน" },
+        { en: "Dinner", read: "ดิน-เนอร์", th: "อาหารเย็น" },
+        { en: "Dessert", read: "ดิ-เซิร์ท", th: "ของหวาน" },
+        { en: "Vegetable", read: "เวจ-ทะ-เบิล", th: "ผัก" },
+        { en: "Meat", read: "มีท", th: "เนื้อสัตว์" },
+        { en: "Beef", read: "บีฟ", th: "เนื้อวัว" },
+        { en: "Pork", read: "พอร์ค", th: "เนื้อหมู" },
+        { en: "Seafood", read: "ซี-ฟู้ด", th: "อาหารทะเล" },
+        { en: "Honey", read: "ฮัน-นี่", th: "น้ำผึ้ง" },
+        { en: "Butter", read: "บัต-เทอร์", th: "เนย" },
+        { en: "Cheese", read: "ชีส", th: "ชีส" },
+        { en: "Juice", read: "จู๊ซ", th: "น้ำผลไม้" },
+        { en: "Alcohol", read: "แอล-กอ-ฮอล์", th: "แอลกอฮอล์" },
+        { en: "Delicious", read: "ดิ-ลิ-เชียส", th: "อร่อย" },
+        { en: "Bitter", read: "บิท-เทอร์", th: "ขม" },
+        { en: "Internet", read: "อิน-เทอร์-เน็ต", th: "อินเทอร์เน็ต" },
+        { en: "Website", read: "เว็บ-ไซต์", th: "เว็บไซต์" },
+        { en: "Keyboard", read: "คีย์-บอร์ด", th: "แป้นพิมพ์" },
+        { en: "Mouse", read: "เมาส์", th: "เมาส์" },
+        { en: "Screen", read: "สกรีน", th: "หน้าจอ" },
+        { en: "Battery", read: "แบท-เทอ-รี่", th: "แบตเตอรี่" },
+        { en: "Password", read: "พาส-เวิร์ด", th: "รหัสผ่าน" },
+        { en: "Download", read: "ดาวน์-โหลด", th: "ดาวน์โหลด" },
+        { en: "Upload", read: "อัพ-โหลด", th: "อัปโหลด" },
+        { en: "Software", read: "ซอฟต์-แวร์", th: "ซอฟต์แวร์" },
+        { en: "Hardware", read: "ฮาร์ด-แวร์", th: "ฮาร์ดแวร์" },
+        { en: "Database", read: "เด-ตะ-เบส", th: "ฐานข้อมูล" },
+        { en: "Mobile", read: "โม-บาย", th: "มือถือ" },
+        { en: "Message", read: "เมส-เสจ", th: "ข้อความ" },
+        { en: "Email", read: "อี-เมล", th: "อีเมล" },
+        { en: "Camera", read: "แคม-เมอ-ร่า", th: "กล้อง" },
+        { en: "Video", read: "วิ-ดี-โอ", th: "วิดีโอ" },
+        { en: "Music", read: "มิว-สิค", th: "ดนตรี" },
+        { en: "Photo", read: "โฟ-โต้", th: "รูปถ่าย" },
+        { en: "Printer", read: "พริน-เทอร์", th: "เครื่องพิมพ์" },
+        { en: "Sports", read: "สปอร์ต", th: "กีฬา" },
+        { en: "Football", read: "ฟุต-บอล", th: "ฟุตบอล" },
+        { en: "Basketball", read: "บาส-เก็ต-บอล", th: "บาสเกตบอล" },
+        { en: "Tennis", read: "เทน-นิส", th: "เทนนิส" },
+        { en: "Swimming", read: "สวิม-มิ่ง", th: "ว่ายน้ำ" },
+        { en: "Running", read: "รัน-นิ่ง", th: "วิ่ง" },
+        { en: "Exercise", read: "เอ็ก-เซอร์-ไซส์", th: "ออกกำลังกาย" },
+        { en: "Gym", read: "จิม", th: "โรงยิม" },
+        { en: "Player", read: "เพล-เยอร์", th: "ผู้เล่น" },
+        { en: "Team", read: "ทีม", th: "ทีม" },
+        { en: "Win", read: "วิน", th: "ชนะ" },
+        { en: "Lose", read: "ลูส", th: "แพ้" },
+        { en: "Score", read: "สโก", th: "คะแนน" },
+        { en: "Match", read: "แมทช์", th: "การแข่งขัน" },
+        { en: "Competition", read: "คอม-พะ-ทิ-ชั่น", th: "การแข่งขัน" },
+        { en: "Training", read: "เทรน-นิ่ง", th: "การฝึกซ้อม" },
+        { en: "Coach", read: "โค้ช", th: "ผู้ฝึกสอน" },
+        { en: "Stadium", read: "สเต-เดียม", th: "สนามกีฬา" },
+        { en: "Hobby", read: "ฮอบ-บี้", th: "งานอดิเรก" },
+        { en: "Reading", read: "รีด-ดิ้ง", th: "การอ่าน" },
+        { en: "Painting", read: "เพนท์-ติ้ง", th: "การวาดภาพ" },
+        { en: "Cooking", read: "คุค-กิ้ง", th: "การทำอาหาร" },
+        { en: "Gardening", read: "การ์-เด็น-นิ่ง", th: "การทำสวน" },
+        { en: "Fishing", read: "ฟิช-ชิ่ง", th: "การตกปลา" },
+        { en: "Photography", read: "โฟ-ทอก-ระ-ฟี่", th: "การถ่ายภาพ" },
+        { en: "Shopping", read: "ช้อป-ปิ้ง", th: "การซื้อของ" },
+        { en: "Dancing", read: "แดน-ซิ่ง", th: "การเต้น" },
+        { en: "Traveling", read: "แทร-เวล-ลิ่ง", th: "การเดินทาง" },
+        { en: "Movie", read: "มูฟ-วี่", th: "ภาพยนตร์" },
+        { en: "Series", read: "ซี-รีส์", th: "ละครชุด" },
+        { en: "Documentary", read: "ดอ-คิว-เมน-ตะ-รี่", th: "สารคดี" },
+        { en: "Concert", read: "คอน-เสิร์ต", th: "คอนเสิร์ต" },
+        { en: "Museum", read: "มิว-เซียม", th: "พิพิธภัณฑ์" },
+        { en: "History", read: "ฮิส-โต-รี่", th: "ประวัติศาสตร์" },
+        { en: "Science", read: "ไซ-เอนซ์", th: "วิทยาศาสตร์" },
+        { en: "Math", read: "แมธ", th: "คณิตศาสตร์" },
+        { en: "Art", read: "อาร์ท", th: "ศิลปะ" },
+        { en: "Nature", read: "เน-เชอร์", th: "ธรรมชาติ" },
+        { en: "Animal", read: "แอน-นิ-มอล", th: "สัตว์" },
+        { en: "Planet", read: "แพลน-เน็ต", th: "ดาวเคราะห์" },
+        { en: "Space", read: "สเปซ", th: "อวกาศ" },
+        { en: "Energy", read: "เอน-เนอร์-จี่", th: "พลังงาน" },
+        { en: "Electricity", read: "อิ-เล็ก-ทริก-ซิตี้", th: "ไฟฟ้า" },
+        { en: "Environment", read: "เอน-ไว-รอน-เมนท์", th: "สิ่งแวดล้อม" },
+        { en: "Global", read: "โกล-บอล", th: "ทั่วโลก" },
+        { en: "Local", read: "โล-คอล", th: "ในท้องถิ่น" },
+        { en: "Future", read: "ฟิว-เชอร์", th: "อนาคต" },
+        { en: "Past", read: "พาสต์", th: "อดีต" },
+        { en: "Present", read: "เพรส-เซ่นท์", th: "ปัจจุบัน" },
+        { en: "Dream", read: "ดรีม", th: "ความฝัน" },
+        { en: "Goal", read: "โกล", th: "เป้าหมาย" },
+        { en: "Success", read: "ซัค-เซส", th: "ความสำเร็จ" },
+        { en: "Failure", read: "เฟล-เยอร์", th: "ความล้มเหลว" },
+        { en: "Idea", read: "ไอ-เดีย", th: "ความคิด" },
+        { en: "Knowledge", read: "นอล-เลจ", th: "ความรู้" },
+        { en: "Experience", read: "อิก-สเป-เรียนซ์", th: "ประสบการณ์" },
+        { en: "Lesson", read: "เลส-ซัน", th: "บทเรียน" },
+        { en: "Question", read: "เควส-ชัน", th: "คำถาม" },
+        { en: "Answer", read: "แอน-เซอร์", th: "คำตอบ" },
+        { en: "Problem", read: "พรอบ-เบลม", th: "ปัญหา" },
+        { en: "Solution", read: "โซ-ลู-ชัน", th: "ทางแก้" },
+        { en: "Action", read: "แอค-ชัน", th: "การกระทำ" },
+        { en: "Change", read: "เชนจ์", th: "การเปลี่ยนแปลง" },
+        { en: "World", read: "เวิลด์", th: "โลก" },
+        // --- ร่างกาย (Body Parts) ---
+        { en: "Head", read: "เฮด", th: "ศีรษะ" },
+        { en: "Hair", read: "แฮร์", th: "ผม" },
+        { en: "Face", read: "เฟซ", th: "ใบหน้า" },
+        { en: "Eye", read: "อาย", th: "ตา" },
+        { en: "Ear", read: "เอียร์", th: "หู" },
+        { en: "Nose", read: "โนส", th: "จมูก" },
+        { en: "Mouth", read: "เมาธ์", th: "ปาก" },
+        { en: "Lip", read: "ลิป", th: "ริมฝีปาก" },
+        { en: "Tooth", read: "ทูธ", th: "ฟัน" },
+        { en: "Tongue", read: "ทัง", th: "ลิ้น" },
+        { en: "Neck", read: "เน็ค", th: "คอ" },
+        { en: "Shoulder", read: "โชล-เดอร์", th: "ไหล่" },
+        { en: "Arm", read: "อาร์ม", th: "แขน" },
+        { en: "Elbow", read: "เอล-โบว์", th: "ข้อศอก" },
+        { en: "Hand", read: "แฮนด์", th: "มือ" },
+        { en: "Finger", read: "ฟิง-เกอร์", th: "นิ้วมือ" },
+        { en: "Chest", read: "เชสท์", th: "หน้าอก" },
+        { en: "Stomach", read: "สทะ-มัค", th: "ท้อง" },
+        { en: "Back", read: "แบค", th: "หลัง" },
+        { en: "Leg", read: "เลก", th: "ขา" },
+        { en: "Knee", read: "นี", th: "เข่า" },
+        { en: "Foot", read: "ฟุต", th: "เท้า" },
+        { en: "Toe", read: "โท", th: "นิ้วเท้า" },
+        { en: "Skin", read: "สกิน", th: "ผิวหนัง" },
+        { en: "Bone", read: "โบน", th: "กระดูก" },
+        { en: "Heart", read: "ฮาร์ท", th: "หัวใจ" },
+        { en: "Brain", read: "เบรน", th: "สมอง" },
+        { en: "Blood", read: "บลัด", th: "เลือด" },
+
+        // --- ผักและผลไม้ (Vegetables & Fruits) ---
+        { en: "Apple", read: "แอพ-เพิล", th: "แอปเปิ้ล" },
+        { en: "Banana", read: "บะ-แนน-นะ", th: "กล้วย" },
+        { en: "Orange", read: "ออ-เรนจ์", th: "ส้ม" },
+        { en: "Mango", read: "แมง-โก้", th: "มะม่วง" },
+        { en: "Grape", read: "เกรพ", th: "องุ่น" },
+        { en: "Watermelon", read: "วอ-เทอร์-เม-ลอน", th: "แตงโม" },
+        { en: "Pineapple", read: "ไพน์-แอพ-เพิล", th: "สับปะรด" },
+        { en: "Papaya", read: "พะ-พาย-ยะ", th: "มะละกอ" },
+        { en: "Coconut", read: "โค-โค-นัท", th: "มะพร้าว" },
+        { en: "Durian", read: "ดู-เรียน", th: "ทุเรียน" },
+        { en: "Strawberry", read: "สตรอ-เบอร์-รี่", th: "สตรอว์เบอร์รี่" },
+        { en: "Lemon", read: "เล-มอน", th: "มะนาว" },
+        { en: "Tomato", read: "โท-เม-โต้", th: "มะเขือเทศ" },
+        { en: "Potato", read: "โพ-เท-โต้", th: "มันฝรั่ง" },
+        { en: "Onion", read: "ออน-เยิน", th: "หัวหอม" },
+        { en: "Garlic", read: "การ์-ลิค", th: "กระเทียม" },
+        { en: "Carrot", read: "แค-รอท", th: "แครอท" },
+        { en: "Corn", read: "คอร์น", th: "ข้าวโพด" },
+        { en: "Cucumber", read: "คิว-คัม-เบอร์", th: "แตงกวา" },
+        { en: "Chili", read: "ชิล-ลี่", th: "พริก" },
+        { en: "Mushroom", read: "มัช-รูม", th: "เห็ด" },
+
+        // --- สีและรูปทรง (Colors & Shapes) ---
+        { en: "White", read: "ไวท์", th: "สีขาว" },
+        { en: "Black", read: "แบล็ค", th: "สีดำ" },
+        { en: "Red", read: "เรด", th: "สีแดง" },
+        { en: "Blue", read: "บลู", th: "สีน้ำเงิน" },
+        { en: "Green", read: "กรีน", th: "สีเขียว" },
+        { en: "Yellow", read: "เยล-โล่", th: "สีเหลือง" },
+        { en: "Pink", read: "พิงค์", th: "สีชมพู" },
+        { en: "Purple", read: "เพอร์-เพิล", th: "สีม่วง" },
+        { en: "Brown", read: "บราวน์", th: "สีน้ำตาล" },
+        { en: "Grey", read: "เกรย์", th: "สีเทา" },
+        { en: "Orange", read: "ออ-เรนจ์", th: "สีส้ม" },
+        { en: "Gold", read: "โกลด์", th: "สีทอง" },
+        { en: "Silver", read: "ซิล-เวอร์", th: "สีเงิน" },
+        { en: "Circle", read: "เซอร์-เคิล", th: "วงกลม" },
+        { en: "Square", read: "สแควร์", th: "สี่เหลี่ยมจัตุรัส" },
+        { en: "Triangle", read: "ไทร-แอง-เกิล", th: "สามเหลี่ยม" },
+        { en: "Rectangle", read: "เรค-แทน-เกิล", th: "สี่เหลี่ยมผืนผ้า" },
+        { en: "Oval", read: "โอ-วอล", th: "วงรี" },
+        { en: "Heart", read: "ฮาร์ท", th: "รูปหัวใจ" },
+        { en: "Star", read: "สตาร์", th: "รูปดาว" },
+
+        // --- คำกริยาและการทำงาน (Verbs & Work) ---
+        { en: "Meeting", read: "มีท-ติ้ง", th: "การประชุม" },
+        { en: "Office", read: "ออฟ-ฟิศ", th: "สำนักงาน" },
+        { en: "Document", read: "ดอ-คิว-เมนท์", th: "เอกสาร" },
+        { en: "Report", read: "รี-พอร์ต", th: "รายงาน" },
+        { en: "Salary", read: "แซล-ละ-รี่", th: "เงินเดือน" },
+        { en: "Bonus", read: "โบ-นัส", th: "เงินโบนัส" },
+        { en: "Contract", read: "คอน-แทรคท์", th: "สัญญา" },
+        { en: "Sign", read: "ไซน์", th: "ลงชื่อ" },
+        { en: "Customer", read: "คัส-ทะ-เมอร์", th: "ลูกค้า" },
+        { en: "Product", read: "พรอ-ดักท์", th: "สินค้า" },
+        { en: "Service", read: "เซอร์-วิส", th: "บริการ" },
+        { en: "Company", read: "คัม-พะ-นี", th: "บริษัท" },
+        { en: "Business", read: "บิส-ซิ-เนส", th: "ธุรกิจ" },
+        { en: "Boss", read: "บอส", th: "เจ้านาย" },
+        { en: "Employee", read: "เอม-พะ-ลอย-อี", th: "ลูกจ้าง/พนักงาน" },
+        { en: "Team", read: "ทีม", th: "ทีมงาน" },
+        { en: "Work", read: "เวิร์ค", th: "ทำงาน" },
+        { en: "Hire", read: "ไฮ-เออร์", th: "จ้างงาน" },
+        { en: "Fire", read: "ไฟ-เออร์", th: "ไล่ออก" },
+        { en: "Interview", read: "อิน-เทอร์-วิว", th: "สัมภาษณ์" },
+        { en: "Position", read: "พะ-ซิ-ชั่น", th: "ตำแหน่ง" },
+        { en: "Promotion", read: "พรอ-โม-ชั่น", th: "การเลื่อนตำแหน่ง" },
+        { en: "Retire", read: "รี-ไท-เออร์", th: "เกษียณ" },
+        { en: "Vacation", read: "เว-เค-ชั่น", th: "วันหยุดพักผ่อน" },
+
+        // --- สำนวนและคำอุทาน (Phrases & Interjections) ---
+        { en: "Excuse me", read: "อิค-ซคิว-ส มี", th: "ขออนุญาต/ขอโทษ" },
+        { en: "Sorry", read: "ซอ-รี่", th: "ขอโทษ" },
+        { en: "Thank you", read: "แธงค์ กิ้ว", th: "ขอบคุณ" },
+        { en: "You're welcome", read: "ยัวร์ เวล-คัม", th: "ยินดี/ไม่เป็นไร" },
+        { en: "Please", read: "พลีซ", th: "ได้โปรด" },
+        { en: "No problem", read: "โน พรอบ-เบลม", th: "ไม่มีปัญหา" },
+        { en: "Of course", read: "ออฟ คอร์ส", th: "แน่นอน" },
+        { en: "Maybe", read: "เม-บี", th: "บางที" },
+        { en: "I don't know", read: "ไอ โดนท์ โนว์", th: "ฉันไม่รู้" },
+        { en: "Wait a minute", read: "เวท อะ มิ-นิท", th: "รอสักครู่" },
+        { en: "Hurry up", read: "เฮอ-รี่ อัพ", th: "เร็วๆ หน่อย" },
+        { en: "Calm down", read: "คาล์ม ดาวน์", th: "ใจเย็นๆ" },
+        { en: "Good luck", read: "กู้ด ลัค", th: "โชคดีนะ" },
+        { en: "Congratulations", read: "คอน-แกร-ทู-เล-ชั่น", th: "ยินดีด้วย" },
+        { en: "Cheers", read: "เชียร์ส", th: "ไชโย/ชนแก้ว" },
+        { en: "Awesome", read: "ออ-ซัม", th: "สุดยอด" },
+        { en: "Unbelievable", read: "อัน-บี-ลี-วะ-เบิล", th: "เหลือเชื่อ" },
+        { en: "Exactly", read: "อิก-แซคท์-ลี่", th: "ถูกต้องที่สุด" },
+        { en: "Seriously", read: "ซี-เรียส-ลี่", th: "จริงจังป่ะเนี่ย" },
+
+        // --- สรรพนามและคำเชื่อม (Pronouns & Connectors) ---
+        { en: "I", read: "ไอ", th: "ฉัน" },
+        { en: "You", read: "ยู", th: "คุณ" },
+        { en: "We", read: "วี", th: "พวกเรา" },
+        { en: "They", read: "เธย์", th: "พวกเขา" },
+        { en: "He", read: "ฮี", th: "เขา (ผู้ชาย)" },
+        { en: "She", read: "ชี", th: "เธอ (ผู้หญิง)" },
+        { en: "It", read: "อิท", th: "มัน" },
+        { en: "And", read: "แอนด์", th: "และ" },
+        { en: "But", read: "บัท", th: "แต่" },
+        { en: "Or", read: "ออร์", th: "หรือ" },
+        { en: "Because", read: "บิ-คอส", th: "เพราะว่า" },
+        { en: "So", read: "โซ", th: "ดังนั้น" },
+        { en: "With", read: "วิธ", th: "กับ/ด้วย" },
+        { en: "Without", read: "วิธ-เอาท์", th: "ปราศจาก" },
+        { en: "If", read: "อิฟ", th: "ถ้า" },
+        { en: "When", read: "เว็น", th: "เมื่อไหร่" },
+        { en: "Where", read: "แวร์", th: "ที่ไหน" },
+        { en: "Who", read: "ฮู", th: "ใคร" },
+        { en: "Why", read: "วาย", th: "ทำไม" },
+        { en: "How", read: "ฮาว", th: "อย่างไร" },
+
+        // --- กีฬาและงานอดิเรก (Sports & Hobbies) ---
+        { en: "Swimming", read: "สวิม-มิ่ง", th: "ว่ายน้ำ" },
+        { en: "Running", read: "รัน-นิ่ง", th: "วิ่ง" },
+        { en: "Cycling", read: "ไซ-คลิ่ง", th: "ปั่นจักรยาน" },
+        { en: "Boxing", read: "บ็อก-ซิ่ง", th: "ชกมวย" },
+        { en: "Yoga", read: "โย-คะ", th: "โยคะ" },
+        { en: "Skiing", read: "สกี-อิ่ง", th: "เล่นสกี" },
+        { en: "Surfing", read: "เซอร์-ฟิ่ง", th: "โต้คลื่น" },
+        { en: "Golf", read: "กอล์ฟ", th: "กอล์ฟ" },
+        { en: "Badminton", read: "แบด-มิน-ตัน", th: "แบดมินตัน" },
+        { en: "Exercise", read: "เอ็ก-เซอร์-ไซส์", th: "ออกกำลังกาย" },
+        { en: "Reading", read: "รีด-ดิ้ง", th: "การอ่าน" },
+        { en: "Writing", read: "ไร-ติ้ง", th: "การเขียน" },
+        { en: "Painting", read: "เพนท์-ติ้ง", th: "การวาดภาพ" },
+        { en: "Cooking", read: "คุค-กิ้ง", th: "การทำอาหาร" },
+        { en: "Fishing", read: "ฟิช-ชิ่ง", th: "การตกปลา" },
+        { en: "Dancing", read: "แดน-ซิ่ง", th: "การเต้น" },
+        { en: "Photography", read: "โฟ-ทอก-ระ-ฟี่", th: "การถ่ายภาพ" },
+        { en: "Traveling", read: "แทร-เวล-ลิ่ง", th: "การเดินทาง" },
+
+        // --- สภาพอากาศและธรรมชาติ (Nature) ---
+        { en: "Sun", read: "ซัน", th: "พระอาทิตย์" },
+        { en: "Moon", read: "มูน", th: "พระจันทร์" },
+        { en: "Star", read: "สตาร์", th: "ดวงดาว" },
+        { en: "Cloud", read: "คลาวด์", th: "เมฆ" },
+        { en: "Sky", read: "สกาย", th: "ท้องฟ้า" },
+        { en: "Rain", read: "เรน", th: "ฝน" },
+        { en: "Snow", read: "สโนว์", th: "หิมะ" },
+        { en: "Wind", read: "วินด์", th: "ลม" },
+        { en: "Storm", read: "สทอร์ม", th: "พายุ" },
+        { en: "Fog", read: "ฟ็อก", th: "หมอก" },
+        { en: "Lightning", read: "ไลท์-นิ่ง", th: "ฟ้าแลบ" },
+        { en: "Thunder", read: "ธัน-เดอร์", th: "ฟ้าร้อง" },
+        { en: "Ocean", read: "โอ-เชี่ยน", th: "มหาสมุทร" },
+        { en: "Sea", read: "ซี", th: "ทะเล" },
+        { en: "River", read: "ริ-เว่อร์", th: "แม่น้ำ" },
+        { en: "Mountain", read: "เมาน์-เทน", th: "ภูเขา" },
+        { en: "Forest", read: "ฟอ-เรสต์", th: "ป่า" },
+        { en: "Island", read: "ไอ-แลนด์", th: "เกาะ" },
+        { en: "Flower", read: "ฟลาว-เออร์", th: "ดอกไม้" },
+        { en: "Tree", read: "ทรี", th: "ต้นไม้" },
+        { en: "Stone", read: "สโตน", th: "หิน" },
+
+        { en: "Bottle", read: "บอท-เทิล", th: "ขวด" },
+        { en: "Glass", read: "กลาส", th: "แก้ว" },
+        { en: "Cup", read: "คัพ", th: "ถ้วย" },
+        { en: "Bag", read: "แบค", th: "กระเป๋า" },
+        { en: "Wallet", read: "วอล-เล็ท", th: "กระเป๋าสตางค์" },
+        { en: "Key", read: "คีย์", th: "กุญแจ" },
+        { en: "Clock", read: "คล็อก", th: "นาฬิกา" },
+        { en: "Watch", read: "วอทช์", th: "นาฬิกาข้อมือ" },
+        { en: "Umbrella", read: "อัม-เบรล-ล่า", th: "ร่ม" },
+        { en: "Mirror", read: "มิ-เรอร์", th: "กระจก" },
+        { en: "Comb", read: "โคมบ์", th: "หวี" },
+        { en: "Money", read: "มัน-นี่", th: "เงิน" },
+        { en: "Gift", read: "กิฟท์", th: "ของขวัญ" },
+        { en: "Card", read: "คาร์ด", th: "บัตร" },
+        { en: "Ticket", read: "ทิค-เก็ต", th: "ตั๋ว" },
+        { en: "News", read: "นิวส์", th: "ข่าว" },
+        { en: "Ad", read: "แอด", th: "โฆษณา" },
+        { en: "Soap", read: "โซป", th: "สบู่" },
+        { en: "Shampoo", read: "แชม-พู", th: "ยาสระผม" },
+        { en: "Eat", read: "อีท", th: "กิน" },
+        { en: "Drink", read: "ดริงค์", th: "ดื่ม" },
+        { en: "Sleep", read: "สลีพ", th: "นอน" },
+        { en: "Walk", read: "วอล์ค", th: "เดิน" },
+        { en: "Run", read: "รัน", th: "วิ่ง" },
+        { en: "Go", read: "โก", th: "ไป" },
+        { en: "Come", read: "คัม", th: "มา" },
+        { en: "Sit", read: "สิท", th: "นั่ง" },
+        { en: "Stand", read: "สแตนด์", th: "ยืน" },
+        { en: "Speak", read: "สปีค", th: "พูด" },
+        { en: "Talk", read: "ทอล์ค", th: "คุย" },
+        { en: "Listen", read: "ลิส-เซิน", th: "ฟัง" },
+        { en: "Hear", read: "เฮียร์", th: "ได้ยิน" },
+        { en: "Read", read: "รีด", th: "อ่าน" },
+        { en: "Write", read: "ไรท์", th: "เขียน" },
+        { en: "Learn", read: "เลิร์น", th: "เรียน" },
+        { en: "Teach", read: "ทีช", th: "สอน" },
+        { en: "Buy", read: "บาย", th: "ซื้อ" },
+        { en: "Sell", read: "เซล", th: "ขาย" },
+        { en: "Give", read: "กิฟ", th: "ให้" },
+        { en: "Take", read: "เทค", th: "เอามา" },
+        { en: "Help", read: "เฮลป์", th: "ช่วย" },
+        { en: "Play", read: "เพลย์", th: "เล่น" },
+        { en: "Love", read: "เลิฟ", th: "รัก" },
+        { en: "Hate", read: "เฮท", th: "เกลียด" },
+        { en: "Like", read: "ไลค์", th: "ชอบ" },
+        { en: "Think", read: "ธิงค์", th: "คิด" },
+        { en: "Know", read: "โนว์", th: "รู้" },
+        { en: "Understand", read: "อัน-เดอร์-สแตนด์", th: "เข้าใจ" },
+        { en: "Start", read: "สทาร์ท", th: "เริ่ม" },
+        { en: "Stop", read: "สท็อป", th: "หยุด" },
+        { en: "Wait", read: "เวท", th: "รอ" },
+        { en: "Open", read: "โอ-เพ่น", th: "เปิด" },
+        { en: "Close", read: "โคลส", th: "ปิด" },
+        { en: "Feel", read: "ฟีล", th: "รู้สึก" },
+        { en: "Wash", read: "วอช", th: "ล้าง" },
+        { en: "Clean", read: "คลีน", th: "ทำความสะอาด" },
+        { en: "Cook", read: "คุค", th: "ปรุงอาหาร" },
+        // --- ลักษณะนิสัยและบุคคล (Personality & People) ---
+        { en: "Generous", read: "เจน-เนอ-รัส", th: "ใจกว้าง/เอื้อเฟื้อ" },
+        { en: "Selfish", read: "เซล-ฟิช", th: "เห็นแก่ตัว" },
+        { en: "Patient", read: "เพ-เชี่ยนท์", th: "อดทน" },
+        { en: "Stubborn", read: "สทับ-เบิร์น", th: "ดื้อรั้น" },
+        { en: "Cheerful", read: "เชียร์-ฟูล", th: "ร่าเริง" },
+        { en: "Clumsy", read: "คลัม-ซี่", th: "ซุ่มซ่าม" },
+        { en: "Naughty", read: "นอ-ตี้", th: "ดื้อ/ซน" },
+        { en: "Polite", read: "พะ-ไลท์", th: "สุภาพ" },
+        { en: "Rude", read: "รูด", th: "หยาบคาย" },
+        { en: "Lazy", read: "เล-ซี่", th: "ขี้เกียจ" },
+        { en: "Hard-working", read: "ฮาร์ด-เวิร์ค-กิ้ง", th: "ขยัน" },
+        { en: "Clever", read: "เคล-เว่อร์", th: "ฉลาด" },
+        { en: "Shy", read: "ชาย", th: "อาย" },
+        { en: "Confident", read: "คอน-ฟิ-เด็นท์", th: "มั่นใจ" },
+        { en: "Honest", read: "ออน-เนสท์", th: "ซื่อสัตย์" },
+        { en: "Greedy", read: "กรี-ดี้", th: "โลภ" },
+        { en: "Gentle", read: "เจน-เทิล", th: "อ่อนโยน" },
+        { en: "Genius", read: "จี-เนียส", th: "อัจฉริยะ" },
+        { en: "Adult", read: "อะ-ดัลท์", th: "ผู้ใหญ่" },
+        { en: "Teenager", read: "ทีน-เอ-เจอร์", th: "วัยรุ่น" },
+        { en: "Stranger", read: "สเทรน-เจอร์", th: "คนแปลกหน้า" },
+        { en: "Guest", read: "เกสท์", th: "แขก" },
+        { en: "Enemy", read: "เอน-เน-มี่", th: "ศัตรู" },
+        { en: "Partner", read: "พาร์ท-เนอร์", th: "คู่หู/หุ้นส่วน" },
+
+        // --- สิ่งของในบ้าน (Around the House) ---
+        { en: "Curtain", read: "เคอร์-เท่น", th: "ผ้าม่าน" },
+        { en: "Blanket", read: "แบล็ง-เค็ท", th: "ผ้าห่ม" },
+        { en: "Pillow", read: "พิล-โลว์", th: "หมอน" },
+        { en: "Mattress", read: "แมท-เทรส", th: "ฟูกที่นอน" },
+        { en: "Wardrobe", read: "วอร์ด-โรบ", th: "ตู้เสื้อผ้า" },
+        { en: "Drawer", read: "ดรอ-เออร์", th: "ลิ้นชัก" },
+        { en: "Hanger", read: "แฮง-เออร์", th: "ไม้แขวนเสื้อ" },
+        { en: "Mirror", read: "มิ-เรอร์", th: "กระจก" },
+        { en: "Towel", read: "เทา-เวล", th: "ผ้าขนหนู" },
+        { en: "Toothbrush", read: "ทูธ-บรัช", th: "แปรงสีฟัน" },
+        { en: "Toothpaste", read: "ทูธ-เพสท์", th: "ยาสีฟัน" },
+        { en: "Comb", read: "โคมบ์", th: "หวี" },
+        { en: "Shampoo", read: "แชม-พู", th: "ยาสระผม" },
+        { en: "Tissue", read: "ทิช-ชู", th: "กระดาษชำระ" },
+        { en: "Fan", read: "แฟน", th: "พัดลม" },
+        { en: "Lamp", read: "แลมป์", th: "โคมไฟ" },
+        { en: "Plug", read: "ปลั๊ก", th: "ปลั๊กไฟ" },
+        { en: "Remote", read: "รี-โมท", th: "รีโมทคอนโทรล" },
+        { en: "Bucket", read: "บัด-เก็ต", th: "ถังน้ำ" },
+        { en: "Broom", read: "บรูม", th: "ไม้กวาด" },
+        { en: "Mop", read: "ม็อบ", th: "ไม้ถูพื้น" },
+        { en: "Dustbin", read: "ดัสท์-บิน", th: "ถังขยะ" },
+
+        // --- คำกริยา (Action Verbs) ---
+        { en: "Borrow", read: "บอ-โรว์", th: "ยืม" },
+        { en: "Lend", read: "เล็นด์", th: "ให้ยืม" },
+        { en: "Choose", read: "ชูซ", th: "เลือก" },
+        { en: "Collect", read: "คะ-เล็คท์", th: "สะสม" },
+        { en: "Compare", read: "คอม-แพร์", th: "เปรียบเทียบ" },
+        { en: "Decide", read: "ดิ-ไซด์", th: "ตัดสินใจ" },
+        { en: "Describe", read: "ดิ-สไครบ์", th: "บรรยาย" },
+        { en: "Discover", read: "ดิส-คัฟ-เว่อร์", th: "ค้นพบ" },
+        { en: "Explain", read: "อิก-สเพลน", th: "อธิบาย" },
+        { en: "Forget", read: "ฟอร์-เก็ต", th: "ลืม" },
+        { en: "Remember", read: "ริ-เมม-เบอร์", th: "จำได้" },
+        { en: "Guess", read: "เกส", th: "เดา" },
+        { en: "Hope", read: "โฮป", th: "หวัง" },
+        { en: "Imagine", read: "อิ-แม-จิน", th: "จินตนาการ" },
+        { en: "Improve", read: "อิม-พรูฟ", th: "ปรับปรุง" },
+        { en: "Invite", read: "อิน-ไวท์", th: "เชิญ" },
+        { en: "Manage", read: "แม-เนจ", th: "จัดการ" },
+        { en: "Measure", read: "เม-เชอร์", th: "วัดขนาด" },
+        { en: "Promise", read: "พรอม-มิส", th: "สัญญา" },
+        { en: "Refuse", read: "ริ-ฟิวซ์", th: "ปฏิเสธ" },
+        { en: "Repair", read: "ริ-แพร์", th: "ซ่อมแซม" },
+        { en: "Share", read: "แชร์", th: "แบ่งปัน" },
+        { en: "Surprise", read: "เซอร์-ไพรส์", th: "ทำให้ประหลาดใจ" },
+        { en: "Travel", read: "แทร-เวล", th: "เดินทาง" },
+        { en: "Worry", read: "วอร์-รี่", th: "กังวล" },
+
+        // --- กีฬาและงานอดิเรก (Sports & Hobbies) ---
+        { en: "Hiking", read: "ไฮ-คิ้ง", th: "เดินป่า" },
+        { en: "Camping", read: "แคม-ปิ้ง", th: "เข้าค่าย" },
+        { en: "Surfing", read: "เซอร์-ฟิ้ง", th: "เล่นกระดานโต้คลื่น" },
+        { en: "Skating", read: "สเก็ต-ติ้ง", th: "เล่นสเก็ต" },
+        { en: "Drawing", read: "ดรอ-อิ้ง", th: "วาดรูป" },
+        { en: "Singing", read: "ซิง-อิ้ง", th: "ร้องเพลง" },
+        { en: "Knitting", read: "นิท-ติ้ง", th: "ถักไหมพรม" },
+        { en: "Chess", read: "เชส", th: "หมากรุก" },
+        { en: "Guitar", read: "กี-ต้าร์", th: "กีตาร์" },
+        { en: "Piano", read: "พิ-แอน-โน่", th: "เปียโน" },
+        { en: "Drums", read: "ดรัมส์", th: "กลอง" },
+        { en: "Puzzle", read: "พัซ-เซิล", th: "จิ๊กซอว์/ปริศนา" },
+
+        // --- สถานที่และทิศทาง (More Places) ---
+        { en: "Bakery", read: "เบ-เกอ-รี่", th: "ร้านขนมปัง" },
+        { en: "Pharmacy", read: "ฟาร์-มา-ซี", th: "ร้านขายยา" },
+        { en: "Laundry", read: "ลอน-ดรี่", th: "ร้านซักรีด" },
+        { en: "Gym", read: "จิม", th: "โรงยิม" },
+        { en: "Temple", read: "เทม-เพิล", th: "วัด" },
+        { en: "Church", read: "เชิร์ช", th: "โบสถ์" },
+        { en: "Mosque", read: "มอสก์", th: "มัสยิด" },
+        { en: "Square", read: "สแควร์", th: "ลานกว้าง/จตุรัส" },
+        { en: "Fountain", read: "ฟาวน์-เท่น", th: "น้ำพุ" },
+        { en: "Statue", read: "สแท-ชู", th: "รูปปั้น" },
+        { en: "Castle", read: "แคส-เซิล", th: "ปราสาท" },
+        { en: "Palace", read: "พา-เลซ", th: "พระราชวัง" },
+        { en: "Border", read: "บอร์-เดอร์", th: "ชายแดน" },
+        { en: "Ocean", read: "โอ-เชี่ยน", th: "มหาสมุทร" },
+        { en: "Jungle", read: "จัง-เกิล", th: "ป่าทึบ" },
+        { en: "Desert", read: "เดส-เซิร์ท", th: "ทะเลทราย" },
+        { en: "Valley", read: "แวล-ลีย์", th: "หุบเขา" },
+
+        // --- เวลาและหน่วยวัด (Time & Measurement) ---
+        { en: "Century", read: "เซน-จู-รี่", th: "ศตวรรษ" },
+        { en: "Decade", read: "เดค-เคด", th: "ทศวรรษ" },
+        { en: "Quarter", read: "ควอร์-เทอร์", th: "หนึ่งในสี่" },
+        { en: "Half", read: "ฮาล์ฟ", th: "ครึ่ง" },
+        { en: "Total", read: "โท-ทอล", th: "ทั้งหมด" },
+        { en: "Average", read: "แอฟ-เวอ-เรจ", th: "ค่าเฉลี่ย" },
+        { en: "Balance", read: "แบล-เลนซ์", th: "สมดุล" },
+        { en: "Weight", read: "เวท", th: "น้ำหนัก" },
+        { en: "Height", read: "ไฮท์", th: "ความสูง" },
+        { en: "Length", read: "เล็งธ์", th: "ความยาว" },
+        { en: "Width", read: "วิดธ์", th: "ความกว้าง" },
+        { en: "Depth", read: "เดพธ์", th: "ความลึก" },
+        { en: "Distance", read: "ดิส-เทินซ์", th: "ระยะทาง" },
+        { en: "Area", read: "แอร์-เรีย", th: "พื้นที่" },
+        { en: "Volume", read: "วอล-ลุ่ม", th: "ปริมาตร" },
+
+        // --- คำศัพท์หมวดทั่วไป (General) ---
+        { en: "Accident", read: "แอค-ซิ-เด็นท์", th: "อุบัติเหตุ" },
+        { en: "Advice", read: "แอด-ไวซ์", th: "คำแนะนำ" },
+        { en: "Amount", read: "อะ-เมาท์", th: "จำนวน" },
+        { en: "Attention", read: "อะ-เทน-ชั่น", th: "ความสนใจ" },
+        { en: "Business", read: "บิซ-เนส", th: "ธุรกิจ" },
+        { en: "Capital", read: "แค-พิ-ทอล", th: "เมืองหลวง/เงินทุน" },
+        { en: "Chance", read: "ชานซ์", th: "โอกาส" },
+        { en: "Comfort", read: "คัม-ฟอร์ท", th: "ความสบาย" },
+        { en: "Damage", read: "แด-มิจ", th: "ความเสียหาย" },
+        { en: "Danger", read: "เดน-เจอร์", th: "อันตราย" },
+        { en: "Effect", read: "อิ-เฟ็คท์", th: "ผลกระทบ" },
+        { en: "Evidence", read: "เอ-วิ-เด็นซ์", th: "หลักฐาน" },
+        { en: "Fault", read: "ฟอลท์", th: "ความผิด" },
+        { en: "Flavor", read: "เฟล-เว่อร์", th: "รสชาติ" },
+        { en: "Freedom", read: "ฟรี-ดอม", th: "อิสรภาพ" },
+        { en: "Habit", read: "แฮ-บิท", th: "นิสัย" },
+        { en: "Income", read: "อิน-คัม", th: "รายได้" },
+        { en: "Justice", read: "จัส-ทิซ", th: "ความยุติธรรม" },
+        { en: "Memory", read: "เมม-โม-รี่", th: "ความจำ" },
+        { en: "Notice", read: "โน-ทิซ", th: "ประกาศ/สังเกต" },
+        { en: "Opinion", read: "อะ-พิน-เยิ่น", th: "ความคิดเห็น" },
+        { en: "Peace", read: "พีซ", th: "สันติภาพ" },
+        { en: "Purpose", read: "เพอ-เพิส", th: "วัตถุประสงค์" },
+        { en: "Quality", read: "ควอล-ลิ-ตี้", th: "คุณภาพ" },
+        { en: "Reason", read: "รี-เซิ่น", th: "เหตุผล" },
+        { en: "Safety", read: "เซฟ-ตี้", th: "ความปลอดภัย" },
+        { en: "Silence", read: "ไซ-เลนซ์", th: "ความเงียบ" },
+        { en: "Society", read: "โซ-ไซ-อะ-ตี้", th: "สังคม" },
+        { en: "System", read: "ซิส-เท็ม", th: "ระบบ" },
+        { en: "Tax", read: "แทกซ์", th: "ภาษี" },
+        { en: "Topic", read: "ทอป-ปิค", th: "หัวข้อ" },
+        { en: "Value", read: "แวล-ลู", th: "มูลค่า" },
+        { en: "Voice", read: "วอยซ์", th: "เสียง (คน)" },
+        { en: "Wealth", read: "เวลธ์", th: "ความมั่งคั่ง" },
+        // --- เครื่องแต่งกายและแฟชั่น (Clothing & Fashion) ---
+        { en: "Necklace", read: "เน็ค-เลซ", th: "สร้อยคอ" },
+        { en: "Bracelet", read: "เบรซ-เล็ท", th: "สร้อยข้อมือ" },
+        { en: "Earrings", read: "เอียร์-ริงส์", th: "ต่างหู" },
+        { en: "Ring", read: "ริง", th: "แหวน" },
+        { en: "Scarf", read: "สคาร์ฟ", th: "ผ้าพันคอ" },
+        { en: "Gloves", read: "กลัฝส์", th: "ถุงมือ" },
+        { en: "Socks", read: "ซ็อคส์", th: "ถุงเท้า" },
+        { en: "Belt", read: "เบลท์", th: "เข็มขัด" },
+        { en: "Wallet", read: "วอล-เล็ท", th: "กระเป๋าสตางค์" },
+        { en: "Handbag", read: "แฮนด์-แบก", th: "กระเป๋าถือ" },
+        { en: "Suit", read: "สูท", th: "ชุดสูท" },
+        { en: "Skirt", read: "สเกิร์ท", th: "กระโปรง" },
+        { en: "Jeans", read: "จีนส์", th: "กางเกงยีนส์" },
+        { en: "Cap", read: "แค็ป", th: "หมวกแก๊ป" },
+
+        // --- การศึกษาและวิชา (Education & Subjects) ---
+        { en: "Geography", read: "จี-ออ-กรา-ฟี่", th: "ภูมิศาสตร์" },
+        { en: "Chemistry", read: "เค-มิส-ทรี", th: "เคมี" },
+        { en: "Biology", read: "ไบ-ออล-โล-จี", th: "ชีววิทยา" },
+        { en: "Physics", read: "ฟิ-สิกส์", th: "ฟิสิกส์" },
+        { en: "Literature", read: "ลิ-เทอร์-ระ-เชอร์", th: "วรรณคดี" },
+        { en: "Economics", read: "อี-โค-โน-มิกส์", th: "เศรษฐศาสตร์" },
+        { en: "Philosophy", read: "ฟิ-ลอส-โซ-ฟี่", th: "ปรัชญา" },
+        { en: "Scholarship", read: "สคอล-ลาร์-ชิพ", th: "ทุนการศึกษา" },
+        { en: "University", read: "ยู-นิ-เวอร์-ซิ-ตี้", th: "มหาวิทยาลัย" },
+        { en: "Certificate", read: "เซอ-ทิ-ฟิ-เคท", th: "ประกาศนียบัตร" },
+        { en: "Library", read: "ไล-บรา-รี่", th: "ห้องสมุด" },
+
+        // --- สื่อและเทคโนโลยี (Media & Tech) ---
+        { en: "Broadcast", read: "บรอด-แคสท์", th: "แพร่ภาพกระจายเสียง" },
+        { en: "Advertisement", read: "แอด-เวอร์-ไทซ์-เมนท์", th: "การโฆษณา" },
+        {
+          en: "Social Media",
+          read: "โซ-เชียล มี-เดีย",
+          th: "สื่อสังคมออนไลน์",
+        },
+        { en: "Communication", read: "คอม-มิว-นิ-เค-ชั่น", th: "การสื่อสาร" },
+        { en: "Journalist", read: "เจอร์-นะ-ลิสท์", th: "นักข่าว" },
+        { en: "Application", read: "แอพ-พลิ-เค-ชั่น", th: "แอปพลิเคชัน" },
+        { en: "Update", read: "อัพ-เดท", th: "ปรับปรุงข้อมูล" },
+        { en: "Wireless", read: "ไว-เลส", th: "ไร้สาย" },
+        { en: "Privacy", read: "ไพร-วะ-ซี", th: "ความเป็นส่วนตัว" },
+
+        // --- กริยาในชีวิตประจำวัน (Daily Action Verbs) ---
+        { en: "Decorate", read: "เดค-โค-เรท", th: "ตกแต่ง" },
+        { en: "Exercise", read: "เอ็ก-เซอ-ไซส์", th: "ออกกำลังกาย" },
+        { en: "Organize", read: "ออร์-กะ-ไนซ์", th: "จัดระเบียบ" },
+        { en: "Purchase", read: "เพอ-เชส", th: "ซื้อ" },
+        { en: "Recommend", read: "เรค-คอม-เมนด์", th: "แนะนำ" },
+        { en: "Participate", read: "พาร์-ทิ-ซิ-เพท", th: "มีส่วนร่วม" },
+        { en: "Celebrate", read: "เซล-ละ-เบรท", th: "ฉลอง" },
+        { en: "Concentrate", read: "คอน-เซน-เทรท", th: "ทำสมาธิ/จดจ่อ" },
+        { en: "Exaggerate", read: "อิก-แซด-เจอ-เรท", th: "พูดเกินจริง" },
+        { en: "Hesitate", read: "เฮ-สิ-เทท", th: "ลังเล" },
+        { en: "Investigate", read: "อิน-เวส-ทิ-เกท", th: "สืบสวน" },
+
+        // --- คำคุณศัพท์ตรงข้าม (Opposite Adjectives) ---
+        { en: "Ordinary", read: "ออร์-ดิ-นะ-รี่", th: "ปกติ/ธรรมดา" },
+        {
+          en: "Extraordinary",
+          read: "เอ็ก-ตร้า-ออร์-ดิ-นะ-รี่",
+          th: "พิเศษ/ไม่ธรรมดา",
+        },
+        { en: "Modern", read: "มอ-เดิร์น", th: "ทันสมัย" },
+        { en: "Ancient", read: "เอน-เชี่ยนท์", th: "โบราณ" },
+        { en: "Complex", read: "คอม-เพล็กซ์", th: "ซับซ้อน" },
+        { en: "Simple", read: "ซิม-เพิล", th: "ง่ายๆ" },
+        { en: "Expensive", read: "อิก-สเพน-ซิฝ", th: "แพง" },
+        { en: "Cheap", read: "ชีพ", th: "ถูก" },
+        { en: "Delicious", read: "ดิ-ลิ-เชียส", th: "อร่อย" },
+        { en: "Tasteless", read: "เทสท์-เลส", th: "ไร้รสชาติ" },
+        { en: "Visible", read: "วิ-ซิ-เบิล", th: "มองเห็นได้" },
+        { en: "Invisible", read: "อิน-วิ-ซิ-เบิล", th: "มองไม่เห็น" },
+
+        // --- การเงินและธุรกิจเพิ่มเติม (Finance & Business Plus) ---
+        { en: "Accountant", read: "อะ-เคาน์-แทนท์", th: "สมุห์บัญชี" },
+        { en: "Investment", read: "อิน-เวสท์-เมนท์", th: "การลงทุน" },
+        { en: "Profit", read: "พรอ-ฟิท", th: "กำไร" },
+        { en: "Loss", read: "ลอส", th: "ขาดทุน" },
+        { en: "Currency", read: "เคอร์-เรน-ซี", th: "สกุลเงิน" },
+        { en: "Stock", read: "สต็อก", th: "หุ้น" },
+        { en: "Entrepreneur", read: "ออน-เทรอ-พรอ-เนอร์", th: "ผู้ประกอบการ" },
+        { en: "Negotiate", read: "นะ-โก-ชิ-เอท", th: "เจรจาต่อรอง" },
+        { en: "Insurance", read: "อิน-ชัว-รันส์", th: "ประกันภัย" },
+
+        // --- กริยาและอาการทางอารมณ์ (Emotional Actions) ---
+        { en: "Admire", read: "แอด-ไม-เออร์", th: "ชื่นชม" },
+        { en: "Comfort", read: "คัม-เฟิร์ท", th: "ปลอบโยน" },
+        { en: "Encourage", read: "เอน-เคอ-เรจ", th: "ให้กำลังใจ" },
+        { en: "Forgive", read: "ฟอร์-กิฝ", th: "ให้อภัย" },
+        { en: "Inspire", read: "อิน-สไป-เออร์", th: "สร้างแรงบันดาลใจ" },
+        { en: "Respect", read: "ริ-สเพ็คท์", th: "เคารพ" },
+        { en: "Trust", read: "ทรัสท์", th: "ไว้วางใจ" },
+        { en: "Argue", read: "อาร์-กิว", th: "โต้เถียง" },
+        { en: "Complain", read: "คอม-เพลน", th: "บ่น" },
+
+        // --- เพิ่มเติมจิปาถะให้ครบจำนวน ---
+        { en: "Success", read: "ซัค-เซส", th: "ความสำเร็จ" },
+        { en: "Opportunity", read: "ออ-พอร์-ทู-นิ-ตี้", th: "โอกาส" },
+        { en: "Challenge", read: "แชล-เลนจ์", th: "ความท้าทาย" },
+        { en: "Experience", read: "อิก-สเพีย-เรียนซ์", th: "ประสบการณ์" },
+        { en: "Knowledge", read: "นอล-เลจ", th: "ความรู้" },
+        { en: "Environment", read: "เอน-ไว-รอน-เมนท์", th: "สิ่งแวดล้อม" },
+        { en: "Tradition", read: "ทระ-ดิ-ชั่น", th: "ประเพณี" },
+        { en: "Culture", read: "คัล-เชอร์", th: "วัฒนธรรม" },
+      ];
+
+      let filtered = [...words];
+
+      function renderTable(data) {
+        const tbody = document.getElementById("vocab-body");
+        tbody.innerHTML = data
+          .map(
+            (w) => `<tr>
+        <td><b>${w.en}</b></td>
+        <td style="color:#9966aa">${w.read}</td>
+        <td>${w.th}</td>
+        <td><button class="speak-btn" onclick="speak('${w.en.replace(/'/g, "\\'")}')" title="ฟังเสียง">🔊</button></td>
+      </tr>`,
+          )
+          .join("");
+        document.getElementById("count-badge").innerHTML =
+          `🔢 ${data.length.toLocaleString()} คำ`;
+      }
+
+      function filterWords() {
+        const v = document.getElementById("search").value.toLowerCase();
+        filtered = v
+          ? words.filter(
+              (w) => w.en.toLowerCase().includes(v) || w.th.includes(v),
+            )
+          : words;
+        renderTable(filtered);
+      }
+
+      function speak(t) {
+        const u = new SpeechSynthesisUtterance(t);
+        u.lang = "en-US";
+        speechSynthesis.speak(u);
+      }
+
+      function showDict() {
+        document.getElementById("dict-view").style.display = "";
+        document.getElementById("game-view").style.display = "none";
+        document.getElementById("btn-dict").classList.add("active");
+        document.getElementById("btn-game").classList.remove("active");
+      }
+
+      function showGame() {
+        document.getElementById("dict-view").style.display = "none";
+        document.getElementById("game-view").style.display = "";
+        document.getElementById("btn-game").classList.add("active");
+        document.getElementById("btn-dict").classList.remove("active");
+        nextQ();
+      }
+
+      let cur = {},
+        sc = 0,
+        tot = 0;
+
+      function nextQ() {
+        document.getElementById("feedback").textContent = "";
+        document.getElementById("feedback").className = "feedback";
+        document.getElementById("next-btn").style.display = "none";
+        cur = words[Math.floor(Math.random() * words.length)];
+        document.getElementById("q-word").textContent = cur.en;
+        document.getElementById("q-read").textContent = cur.read;
+        let opts = [cur.th];
+        while (opts.length < 4) {
+          let r = words[Math.floor(Math.random() * words.length)].th;
+          if (!opts.includes(r)) opts.push(r);
+        }
+        opts.sort(() => Math.random() - 0.5);
+        document.getElementById("options").innerHTML = opts
+          .map(
+            (o) => `
+        <button class="opt" onclick="check(this,'${o.replace(/'/g, "&#39;").replace(/"/g, "&quot;")}')">${o}</button>
+      `,
+          )
+          .join("");
+      }
+
+      function check(btn, choice) {
+        document.querySelectorAll(".opt").forEach((b) => (b.disabled = true));
+        tot++;
+        const fb = document.getElementById("feedback");
+        if (choice === cur.th) {
+          btn.classList.add("correct");
+          sc++;
+          fb.textContent = "ถูกต้อง! เก่งมากค่ะ 🌸";
+          fb.className = "feedback ok";
+        } else {
+          btn.classList.add("wrong");
+          document.querySelectorAll(".opt").forEach((b) => {
+            if (b.textContent.trim() === cur.th) b.classList.add("correct");
+          });
+          fb.textContent = 'ผิดค่ะ! คำตอบที่ถูกคือ: "' + cur.th + '"';
+          fb.className = "feedback no";
+        }
+        document.getElementById("score-correct").textContent = sc;
+        document.getElementById("score-total").textContent = tot;
+        document.getElementById("next-btn").style.display = "inline-block";
+      }
+
+      // Sakura canvas
+      (function () {
+        const canvas = document.getElementById("sakura");
+        const ctx = canvas.getContext("2d");
+        function resize() {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener("resize", resize);
+        const petals = Array.from({ length: 60 }, () => ({
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
+          size: Math.random() * 6 + 3,
+          speed: Math.random() * 1.2 + 0.4,
+          angle: Math.random() * 360,
+          drift: Math.random() * 0.8 - 0.4,
+          opacity: Math.random() * 0.45 + 0.25,
+        }));
+        function draw() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          petals.forEach((p) => {
+            ctx.save();
+            ctx.globalAlpha = p.opacity;
+            ctx.translate(p.x, p.y);
+            ctx.rotate((p.angle * Math.PI) / 180);
+            ctx.beginPath();
+            ctx.moveTo(0, -p.size);
+            ctx.bezierCurveTo(
+              p.size,
+              -p.size * 0.5,
+              p.size,
+              p.size * 0.5,
+              0,
+              p.size,
+            );
+            ctx.bezierCurveTo(
+              -p.size,
+              p.size * 0.5,
+              -p.size,
+              -p.size * 0.5,
+              0,
+              -p.size,
+            );
+            ctx.fillStyle = "#ffb7c5";
+            ctx.fill();
+            ctx.restore();
+            p.y += p.speed;
+            p.x += Math.sin(p.y / 40) * p.drift;
+            p.angle += 0.8;
+            if (p.y > canvas.height + 20) p.y = -10;
+          });
+          requestAnimationFrame(draw);
+        }
+        draw();
+      })();
+
+      renderTable(words);
+    </script>
+  </body>
 </html>
