@@ -23,18 +23,21 @@ A simple and effective bilingual vocabulary reference site for Thai-English lear
 
 ## 📸 Screenshots
 
-<img width="1882" height="970" alt="image" src="https://github.com/user-attachments/assets/d3e16461-277d-4d75-8cc9-d9e634e10c58" />
-<img width="1897" height="971" alt="image" src="https://github.com/user-attachments/assets/feb1f923-39a5-4b82-9e81-702b3fcc145c" />
-<img width="1904" height="971" alt="image" src="https://github.com/user-attachments/assets/7c409a83-6dda-40e4-b78b-3f8e36d62db2" />
-<img width="1905" height="964" alt="image" src="https://github.com/user-attachments/assets/17bae731-d74b-407b-9e4f-6ec099e87fbc" />
-<img width="1898" height="970" alt="image" src="https://github.com/user-attachments/assets/c7a872f8-f9d6-450d-83fa-74c880443f4f" />
-<img width="1904" height="952" alt="image" src="https://github.com/user-attachments/assets/8350e296-df06-474f-bada-6448d213bfc6" />
-<img width="1903" height="966" alt="image" src="https://github.com/user-attachments/assets/aa991aa1-d4bc-4dc8-bbf8-6d51f8a214b2" />
-<img width="1897" height="974" alt="image" src="https://github.com/user-attachments/assets/83f442a3-3965-4ae3-abd0-4ae7c7d2fb48" />
-<img width="1904" height="963" alt="image" src="https://github.com/user-attachments/assets/1dbd40a3-57a4-4d57-a2ea-7e239a306ad2" />
-<img width="1909" height="965" alt="image" src="https://github.com/user-attachments/assets/845feed9-7998-462f-a40a-949ecd93ca5d" />
-<img width="1909" height="966" alt="image" src="https://github.com/user-attachments/assets/4adb4f4d-c604-4ca5-a53c-9567ddb50f3c" />
-<img width="1910" height="968" alt="image" src="https://github.com/user-attachments/assets/c0888192-078c-4ea3-ac8e-83b9985644c9" />
+<img width="1914" height="909" alt="image" src="https://github.com/user-attachments/assets/47819b08-1dab-47fb-b104-249d363066a6" />
+<img width="1917" height="909" alt="image" src="https://github.com/user-attachments/assets/4a87bc08-ef36-42da-a893-5702e22a1213" />
+<img width="1915" height="907" alt="image" src="https://github.com/user-attachments/assets/e1123db4-7b55-42ef-a807-3d9b1bee323f" />
+<img width="1917" height="909" alt="image" src="https://github.com/user-attachments/assets/c44b0c43-a9ea-4999-a2a0-6862f5b1fa6b" />
+<img width="1916" height="904" alt="image" src="https://github.com/user-attachments/assets/360f6f3d-086d-4f4d-aeae-ba999bc58186" />
+<img width="1916" height="908" alt="image" src="https://github.com/user-attachments/assets/6414dc5c-0a3c-48e6-b9a4-118623bba5bc" />
+<img width="1919" height="908" alt="image" src="https://github.com/user-attachments/assets/0b2133a8-f590-440d-bfbd-51813d96b99c" />
+<img width="1914" height="906" alt="image" src="https://github.com/user-attachments/assets/366896c4-c3a3-4ce5-bbe5-6605103e81c1" />
+<img width="1919" height="914" alt="image" src="https://github.com/user-attachments/assets/b8675e56-ee10-4d12-b3a4-947083f1c976" />
+<img width="1918" height="911" alt="image" src="https://github.com/user-attachments/assets/ba2a1d37-54f6-44f0-a6ba-45ce61839317" />
+<img width="1919" height="909" alt="image" src="https://github.com/user-attachments/assets/5d41f5b6-8f5c-4ec5-a558-07f801f1585b" />
+<img width="1916" height="914" alt="image" src="https://github.com/user-attachments/assets/9ef03bdd-92fe-4f1e-8b62-a322da767aef" />
+
+
+
 
 ## 🔗 Live Demo & Repository
 
