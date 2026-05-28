@@ -1,4 +1,4 @@
-<img width="1915" height="916" alt="image" src="https://github.com/user-attachments/assets/382a0d5f-71fb-4f12-8cba-917907d91ae2" /># 📖 Thai-English Dictionary & Learning Hub
+# 📖 Thai-English Dictionary & Learning Hub
 
 An all-in-one bilingual vocabulary reference and learning platform designed to be clean, fast, responsive, and fully optimized for learners of all levels.
 
@@ -52,6 +52,7 @@ An all-in-one bilingual vocabulary reference and learning platform designed to b
 <img width="1919" height="912" alt="image" src="https://github.com/user-attachments/assets/865f59e0-5967-4b22-a3b4-00a64377250d" />
 <img width="1919" height="913" alt="image" src="https://github.com/user-attachments/assets/39496e9c-7998-4ae2-9cb3-4954f390a0c5" />
 <img width="1915" height="917" alt="image" src="https://github.com/user-attachments/assets/4473087d-32e4-4c4b-9c1f-2a802784a782" />
+<img width="1915" height="916" alt="image" src="https://github.com/user-attachments/assets/382a0d5f-71fb-4f12-8cba-917907d91ae2" />
 <img width="1919" height="915" alt="image" src="https://github.com/user-attachments/assets/bf4b42eb-aab7-46e9-9da7-99100d04ba90" />
 <img width="1917" height="909" alt="image" src="https://github.com/user-attachments/assets/7963201d-6b82-4eb4-99db-8a2f0aec1b7c" />
 <img width="1919" height="911" alt="image" src="https://github.com/user-attachments/assets/ab3c800b-e555-4cdb-8555-583f3937efef" />
