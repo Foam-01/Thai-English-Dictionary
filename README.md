@@ -1,25 +1,50 @@
-# 📘 Thai-English Dictionary
+# 📖 Thai-English Dictionary & Learning Hub
 
-A simple and effective bilingual vocabulary reference site for Thai-English learners. Designed to be clean, responsive, and fully offline. Great for students, teachers, and lifelong learners.
+An all-in-one bilingual vocabulary reference and learning platform designed to be clean, fast, responsive, and fully optimized for learners of all levels.
+
+---
 
 ## 🧱 Tech Stack
 
-- 🧾 **Frontend**: HTML5 & CSS3
--   JavaScript**: 
-- 📱 **Responsive Design**: Works on all screen sizes
+*   🧾 **Frontend:** HTML5 & CSS3
+*   ⚡ **JavaScript:** Vanilla JS (Real-time Processing & Game Logic)
+*   📱 **Responsive Design:** Flawlessly optimized for all screen sizes
+
+---
 
 ## ✨ Features
 
-- 🧠 1,000+ English vocabulary words
-- 🇹🇭 Thai meanings + Thai pronunciation (คำอ่าน)
-- 🗂 Categorized by usage:
-  - Basic Words
-  - Common Words with Examples
-  - Nouns & Phrases
-  - Verbs & Adjectives
-- 📄 Fully static HTML pages
-- 🌐 100% offline support — just open in a browser
-- 🔗 Easy navigation between categories
+### 🔍 Smart Dictionary System
+*   **Omni-Search:** Real-time instant search across English words, Thai definitions, and Thai phonetic pronunciations (คำอ่าน).
+*   **Category Filter:** Quickly browse vocabulary grouped by practical use-cases:
+    *   🛋️ Daily Life
+    *   🧠 Feelings & Emotions
+    *   📝 Academic
+    *   🌱 Nature
+    *   🍔 Food & Drinks
+    *   💼 Work & Career
+*   **Flashcard Detail Panel:** Click open the right-side panel to view contextual example sentences and synonyms.
+*   **Favorites System:** Bookmark words instantly by tapping the heart (`♥`) icon.
+
+### 🎮 Vocabulary Games (3 Challenging Modes)
+1.  **Multiple Choice:** Test your memory with standard 4-option quizzes.
+2.  **Typing Mode:** Practice spelling directly, equipped with a "Hint" 💡 button when you get stuck.
+3.  **Listening Mode:** Train your ear by listening to native pronunciation and selecting the correct answer.
+
+> 🎯 **Performance Tracking:** Features built-in daily Streak counters and live Accuracy (%) tracking.
+
+### ❤️ Favorites & Data Management
+*   Dedicated search bar to filter exclusively within your saved favorite words.
+*   **Data Export:** Seamlessly export your favorite word list into `CSV` or `JSON` formats for external study.
+
+### 📊 Statistics & Progress Tracking
+*   Intuitive dashboard to visualize your vocabulary learning journey.
+*   Monitors overall accuracy percentage, total words encountered, and displays a recent history log.
+
+### ⚙️ Preferences & UI Customization
+*   **Audio Settings:** Toggle auto-pronunciation on/off and select your preferred accent (**US / UK / AU**).
+*   **Aesthetics:** Turn the falling Cherry Blossom (Sakura) screen effect on or off based on your taste.
+*   **System Reset:** Easily clear stats and wipe history to start your learning journey fresh.
 
 ## 📸 Screenshots
 
@@ -44,19 +69,7 @@ A simple and effective bilingual vocabulary reference site for Thai-English lear
 - 🔴 **Live Demo**: https://thai-english-dictionary.netlify.app/
 - 📦 **GitHub**: [https://github.com/Foam-01/Thai-English-Dictionary](https://github.com/Foam-01/Thai-English-Dictionary)
 
-## 📁 Folder Structure
 
-```bash
-Thai-English-Dictionary/
-├── index.html                  # Main page
-├── basic-words.html            # 100+ basic vocab
-├── common-words-example.html   # Common words w/ examples
-├── nouns-phrases-1.html        # Noun phrases part 1
-├── nouns-phrases-2.html        # Noun phrases part 2
-├── verbs-adjectives.html       # Verbs & adjectives
-├── style.css                   # Main CSS
-└── README.md                   # Project info
-```
 
 🚀 Getting Started
 
